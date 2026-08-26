@@ -1,0 +1,47 @@
+{
+  "mcpServers": {
+    "sqlite-knowledge-memory": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sqlite",
+        "--db-path",
+        "./data/agent_memory.db"
+      ],
+      "env": {}
+    },
+    "puppeteer-crawler": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-puppeteer"
+      ],
+      "env": {}
+    },
+    "github-connector": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {}
+    },
+    "filesystem-service": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/home/mx/artefactory"
+      ],
+      "env": {}
+    },
+    "ollama-inference-mcp": {
+      "url": "http://localhost:11434/mcp/sse",
+      "headers": {}
+    },
+    "postgres-analytics": {
+      "url": "http://localhost:5432/mcp-sse",
+      "headers": {}
+    }
+  }
+}

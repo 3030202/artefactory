@@ -1,0 +1,316 @@
+{
+  "schema_version": "2.0.0",
+  "project": "artefactory-prompt-ops",
+  "timestamp": "2026-08-26T12:30:32.261Z",
+  "counts": {
+    "sources": 21,
+    "prompts": 22,
+    "skills": 6,
+    "workflows": 4,
+    "mcp_servers": 6,
+    "rules": 5
+  },
+  "manifest_hash": "6075c378c7c5",
+  "artifacts": {
+    "prompts": [
+      {
+        "id": "prm_synced_agentic_rag_research",
+        "title": "Agentic RAG & Multi-Agent Debate Research Papers (2024–2026) (Live Feed)",
+        "version": "1.0.0",
+        "file": "prompts/prm_synced_agentic_rag_research.md",
+        "hash": "8b66d1d57818"
+      },
+      {
+        "id": "prm_awesome_sql_optimizer",
+        "title": "Awesome Persona: PostgreSQL / BigQuery Query Optimizer",
+        "version": "1.3.0",
+        "file": "prompts/prm_awesome_sql_optimizer.md",
+        "hash": "af6731813495"
+      },
+      {
+        "id": "prm_awesome_lead_architect",
+        "title": "Awesome Persona: Principal Cloud Solutions Architect",
+        "version": "1.6.0",
+        "file": "prompts/prm_awesome_lead_architect.md",
+        "hash": "c0d88beb1118"
+      },
+      {
+        "id": "prm_synced_dense_tui_patterns",
+        "title": "Dense TUI & Modal Command Architecture (Textual / Bubble Tea / Ratatui) (Live Feed)",
+        "version": "1.0.0",
+        "file": "prompts/prm_synced_dense_tui_patterns.md",
+        "hash": "012f38d93715"
+      },
+      {
+        "id": "prm_synced_garak_scanner",
+        "title": "NVIDIA Garak: LLM Vulnerability & Hallucination Scanner (Live Feed)",
+        "version": "1.0.0",
+        "file": "prompts/prm_synced_garak_scanner.md",
+        "hash": "d6e3363b9f95"
+      },
+      {
+        "id": "prm_synced_mitre_atlas",
+        "title": "MITRE ATLAS: Adversarial Threat Landscape for Artificial-Intelligence Systems (Live Feed)",
+        "version": "1.0.0",
+        "file": "prompts/prm_synced_mitre_atlas.md",
+        "hash": "4574e2b293f4"
+      },
+      {
+        "id": "prm_synced_vllm_engine",
+        "title": "vLLM: High-Throughput & Memory-Efficient LLM Serving (Live Feed)",
+        "version": "1.0.0",
+        "file": "prompts/prm_synced_vllm_engine.md",
+        "hash": "290bde51830b"
+      },
+      {
+        "id": "prm_synced_llama_cpp_gguf",
+        "title": "llama.cpp & GGUF Binary Quantization Format Specification (Live Feed)",
+        "version": "1.0.0",
+        "file": "prompts/prm_synced_llama_cpp_gguf.md",
+        "hash": "7a31b4d8cfd2"
+      },
+      {
+        "id": "prm_synced_langfuse",
+        "title": "Langfuse: Open Source LLM Engineering & Tracing Platform (Live Feed)",
+        "version": "1.0.0",
+        "file": "prompts/prm_synced_langfuse.md",
+        "hash": "f43f9a18d051"
+      },
+      {
+        "id": "prm_synced_autogen_ag2",
+        "title": "AutoGen / AG2: Multi-Agent Conversational Framework (Live Feed)",
+        "version": "1.0.0",
+        "file": "prompts/prm_synced_autogen_ag2.md",
+        "hash": "4614a9a8dff5"
+      },
+      {
+        "id": "prm_synced_crewai",
+        "title": "CrewAI: Role-Playing Autonomous AI Agent Teams (Live Feed)",
+        "version": "1.0.0",
+        "file": "prompts/prm_synced_crewai.md",
+        "hash": "0357a9e488b6"
+      },
+      {
+        "id": "prm_synced_promptlayer_registry",
+        "title": "PromptLayer Prompt Registry Architecture & Semantic Versioning (Live Feed)",
+        "version": "1.0.0",
+        "file": "prompts/prm_synced_promptlayer_registry.md",
+        "hash": "205099021d18"
+      },
+      {
+        "id": "prm_dspy_react_tool_agent",
+        "title": "DSPy ReAct Dynamic Multi-Tool Calling Module",
+        "version": "1.4.0",
+        "file": "prompts/prm_dspy_react_tool_agent.md",
+        "hash": "33d08d51d022"
+      },
+      {
+        "id": "prm_dspy_mipro_optimizer",
+        "title": "DSPy MIPROv2 Multi-Prompt Optimizer Signature",
+        "version": "2.2.0",
+        "file": "prompts/prm_dspy_mipro_optimizer.md",
+        "hash": "40062f8ee67a"
+      },
+      {
+        "id": "prm_cot_step_by_step_reasoning",
+        "title": "Multi-Step Chain-of-Thought (CoT) Trajectory Engine",
+        "version": "2.1.0",
+        "file": "prompts/prm_cot_step_by_step_reasoning.md",
+        "hash": "5d640299ad11"
+      },
+      {
+        "id": "prm_anthropic_system_metaprompt",
+        "title": "Anthropic Meta-Prompting & XML Tag Architect",
+        "version": "2.5.0",
+        "file": "prompts/prm_anthropic_system_metaprompt.md",
+        "hash": "8e994e8d384b"
+      },
+      {
+        "id": "prm_synced_openai_agents_spec",
+        "title": "OpenAI Agents & Responses API Specification (Live Feed)",
+        "version": "1.0.0",
+        "file": "prompts/prm_synced_openai_agents_spec.md",
+        "hash": "30b08300ec9b"
+      },
+      {
+        "id": "prm_synced_a2a_protocol",
+        "title": "Google Agent-to-Agent (A2A) Communication Protocol (Live Feed)",
+        "version": "1.0.0",
+        "file": "prompts/prm_synced_a2a_protocol.md",
+        "hash": "69144a639b22"
+      },
+      {
+        "id": "prm_arch_spec",
+        "title": "System Architecture & Tech Spec Generator",
+        "version": "2.1.0",
+        "file": "prompts/prm_arch_spec.md",
+        "hash": "f5f44d9e0fd8"
+      },
+      {
+        "id": "prm_dspy_signature_generator",
+        "title": "DSPy Compiled Signature & Module Optimizer",
+        "version": "1.3.0",
+        "file": "prompts/prm_dspy_signature_generator.md",
+        "hash": "e836481010b4"
+      },
+      {
+        "id": "prm_owasp_injection_defense",
+        "title": "OWASP Prompt Injection & Jailbreak Defense Guardrail",
+        "version": "2.2.0",
+        "file": "prompts/prm_owasp_injection_defense.md",
+        "hash": "dccf602f8af7"
+      },
+      {
+        "id": "prm_code_reviewer",
+        "title": "Production Code Reviewer & Security Auditor",
+        "version": "1.4.0",
+        "file": "prompts/prm_code_reviewer.md",
+        "hash": "6f6dc648c4f0"
+      }
+    ],
+    "skills": [
+      {
+        "id": "skl_telegram_n8n_dispatcher",
+        "name": "telegram-n8n-dispatcher",
+        "version": "1.4.0",
+        "file": "skills/telegram-n8n-dispatcher/SKILL.md",
+        "hash": "dd6e8efe5f59"
+      },
+      {
+        "id": "skl_mcp_sse_transport",
+        "name": "mcp-sse-bridge",
+        "version": "1.3.0",
+        "file": "skills/mcp-sse-bridge/SKILL.md",
+        "hash": "e87e908dcaae"
+      },
+      {
+        "id": "skl_mcp_inspector",
+        "name": "mcp-server-inspector",
+        "version": "2.1.0",
+        "file": "skills/mcp-server-inspector/SKILL.md",
+        "hash": "f1113d7082f1"
+      },
+      {
+        "id": "skl_langgraph_builder",
+        "name": "langgraph-agent-builder",
+        "version": "2.2.0",
+        "file": "skills/langgraph-agent-builder/SKILL.md",
+        "hash": "d36451c774d8"
+      },
+      {
+        "id": "skl_ollama_vllm_runner",
+        "name": "local-llm-orchestrator",
+        "version": "1.6.0",
+        "file": "skills/local-llm-orchestrator/SKILL.md",
+        "hash": "1dcd0287debb"
+      },
+      {
+        "id": "skl_antigravity_guide",
+        "name": "antigravity-guide",
+        "version": "2.0.0",
+        "file": "skills/antigravity-guide/SKILL.md",
+        "hash": "a3a4a556bb74"
+      }
+    ],
+    "workflows": [
+      {
+        "id": "wf_langgraph_supervisor_dag",
+        "title": "LangGraph Supervisor Multi-Agent Router DAG",
+        "version": "2.3.0",
+        "file": "workflows/wf_langgraph_supervisor_dag.json",
+        "hash": "3f843e02fb18"
+      },
+      {
+        "id": "wf_dspy_teleprompter_dag",
+        "title": "DSPy Continuous Teleprompter Optimization DAG",
+        "version": "1.5.0",
+        "file": "workflows/wf_dspy_teleprompter_dag.json",
+        "hash": "41f5ac743eee"
+      },
+      {
+        "id": "wf_promptfoo_eval_matrix",
+        "title": "Promptfoo Multi-Model Evaluation & Regression Matrix DAG",
+        "version": "2.4.0",
+        "file": "workflows/wf_promptfoo_eval_matrix.json",
+        "hash": "a33e68423252"
+      },
+      {
+        "id": "wf_multiagent_debate_dag",
+        "title": "Multi-Agent Consensus & Debate DAG (AutoGen & LangGraph Pattern)",
+        "version": "1.4.0",
+        "file": "workflows/wf_multiagent_debate_dag.json",
+        "hash": "e93e46140ce3"
+      }
+    ],
+    "mcp_servers": [
+      {
+        "id": "mcp_sqlite_memory",
+        "name": "sqlite-knowledge-memory",
+        "version": "1.1.0",
+        "hash": "62edf82c2daf"
+      },
+      {
+        "id": "mcp_puppeteer_crawler",
+        "name": "puppeteer-crawler",
+        "version": "1.2.0",
+        "hash": "b6d07908186c"
+      },
+      {
+        "id": "mcp_github_connector",
+        "name": "github-connector",
+        "version": "1.4.0",
+        "hash": "726866058eb0"
+      },
+      {
+        "id": "mcp_filesystem",
+        "name": "filesystem-service",
+        "version": "1.0.4",
+        "hash": "352149748ee9"
+      },
+      {
+        "id": "mcp_ollama_local",
+        "name": "ollama-inference-mcp",
+        "version": "1.4.0",
+        "hash": "a63c92e2f81e"
+      },
+      {
+        "id": "mcp_postgres",
+        "name": "postgres-analytics",
+        "version": "2.1.0",
+        "hash": "2d0c8811e9d0"
+      }
+    ],
+    "rules": [
+      {
+        "id": "rul_owasp_llm02_data_leakage",
+        "title": "OWASP LLM02: Sensitive Information & Credential Scrubbing",
+        "priority": "CRITICAL",
+        "hash": "54a6095351c1"
+      },
+      {
+        "id": "rul_owasp_llm06_excessive_agency",
+        "title": "OWASP LLM06: Excessive Agency & Blast-Radius Mitigation",
+        "priority": "CRITICAL",
+        "hash": "fa713557fedd"
+      },
+      {
+        "id": "rul_owasp_llm01_defense",
+        "title": "OWASP LLM01: Prompt Injection & Context Isolation Protocol",
+        "priority": "CRITICAL",
+        "hash": "3b25748735dc"
+      },
+      {
+        "id": "rul_owasp_genai_policy",
+        "title": "OWASP GenAI 2025/2026 Security Guardrails Policy",
+        "priority": "CRITICAL",
+        "hash": "4c9f3e845e26"
+      },
+      {
+        "id": "rul_agents_standard",
+        "title": "AGENTS.md Universal Engineering Protocol",
+        "priority": "CRITICAL",
+        "hash": "bfce5892f785"
+      }
+    ]
+  }
+}

@@ -108,6 +108,15 @@ export const api = {
   convertSource(id, targetType) { return this.request(`/sources/${id}/convert`, { method: 'POST', body: JSON.stringify({ targetType }) }); },
   syncSources(options = {}) { return this.request('/sources/sync', { method: 'POST', body: JSON.stringify(options) }); },
   syncSource(id) { return this.request(`/sources/${id}/sync`, { method: 'POST' }); },
-  getSyncStatus() { return this.request('/sources/sync/status'); }
+  getSyncStatus() { return this.request('/sources/sync/status'); },
+
+  // GitOps & Remote Sync Hub
+  getGitOpsStatus() { return this.request('/gitops/status'); },
+  getGitOpsDiff() { return this.request('/gitops/diff'); },
+  getGitOpsManifest() { return this.request('/gitops/manifest'); },
+  exportGitOps() { return this.request('/gitops/export', { method: 'POST' }); },
+  commitGitOps(data) { return this.request('/gitops/commit', { method: 'POST', body: JSON.stringify(data) }); },
+  pullGitOps() { return this.request('/gitops/pull', { method: 'POST' }); },
+  setGitOpsSession(data) { return this.request('/gitops/auth/session', { method: 'POST', body: JSON.stringify(data) }); }
 };
 

@@ -1,0 +1,102 @@
+{
+  "id": "wf_langgraph_supervisor_dag",
+  "title": "LangGraph Supervisor Multi-Agent Router DAG",
+  "category": "workflows",
+  "description": "Hierarchical multi-agent router delegating tasks to Researcher, Coder, and QA Tester agents with conditional state recovery.",
+  "tags": [
+    "langgraph",
+    "supervisor",
+    "router",
+    "multi-agent"
+  ],
+  "version": "2.3.0",
+  "status": "READY",
+  "nodes": [
+    {
+      "id": "lg_sup",
+      "type": "prompt",
+      "label": "Supervisor Router Agent",
+      "refId": "prm_arch_spec",
+      "status": "READY",
+      "x": 100,
+      "y": 150
+    },
+    {
+      "id": "lg_res",
+      "type": "code",
+      "label": "Deep Research Agent",
+      "refId": null,
+      "status": "READY",
+      "x": 380,
+      "y": 70
+    },
+    {
+      "id": "lg_cod",
+      "type": "code",
+      "label": "Code Generator Agent",
+      "refId": null,
+      "status": "READY",
+      "x": 380,
+      "y": 230
+    },
+    {
+      "id": "lg_rev",
+      "type": "security",
+      "label": "Reviewer & Invariant Check",
+      "refId": "prm_code_reviewer",
+      "status": "READY",
+      "x": 680,
+      "y": 150
+    }
+  ],
+  "edges": [
+    {
+      "from": "lg_sup",
+      "to": "lg_res",
+      "label": "Need Information"
+    },
+    {
+      "from": "lg_sup",
+      "to": "lg_cod",
+      "label": "Need Implementation"
+    },
+    {
+      "from": "lg_res",
+      "to": "lg_rev",
+      "label": "Findings"
+    },
+    {
+      "from": "lg_cod",
+      "to": "lg_rev",
+      "label": "Diff Payload"
+    },
+    {
+      "from": "lg_rev",
+      "to": "lg_sup",
+      "label": "Feedback Loop (Cyclic)"
+    }
+  ],
+  "source_ref": "src_langgraph",
+  "source_title": "LangGraph: Stateful Multi-Agent Cyclic Graph Architecture",
+  "source_url": "https://langchain-ai.github.io/langgraph",
+  "auto_synced": true,
+  "upstream_feed": true,
+  "in_tokens_est": 151,
+  "out_tokens_est": 250,
+  "last_synced_at": "2026-08-26T12:29:51.045Z",
+  "created_at": "2026-08-26T12:29:49.043Z",
+  "updated_at": "2026-08-26T12:29:51.045Z",
+  "history": [
+    {
+      "version": "2.3.0",
+      "timestamp": "2026-08-26T12:29:51.045Z",
+      "note": "Update"
+    },
+    {
+      "version": "2.3.0",
+      "timestamp": "2026-08-26T12:29:49.043Z",
+      "note": "Initial creation",
+      "content_snapshot": null
+    }
+  ]
+}

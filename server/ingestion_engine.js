@@ -30,6 +30,7 @@ export class IngestionEngine {
     this.timer = setInterval(() => {
       this.syncAll({ trigger: 'cron_periodic' }).catch(console.error);
     }, this.autoSyncIntervalMinutes * 60 * 1000);
+    if (this.timer.unref) this.timer.unref();
   }
 
   // 50+ Canonical Ingestion Recipes across all 10 source categories

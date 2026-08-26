@@ -1,0 +1,97 @@
+{
+  "id": "wf_multiagent_debate_dag",
+  "title": "Multi-Agent Consensus & Debate DAG (AutoGen & LangGraph Pattern)",
+  "category": "workflows",
+  "description": "Generates hypotheses from multiple specialist agents, conducts iterative cross-examination debate, and synthesizes unified architectural decision.",
+  "tags": [
+    "multi-agent",
+    "debate",
+    "consensus",
+    "langgraph",
+    "autogen"
+  ],
+  "version": "1.4.0",
+  "status": "ACTIVE",
+  "source_ref": "src_agentic_rag_research",
+  "nodes": [
+    {
+      "id": "deb_1",
+      "type": "prompt",
+      "label": "Problem Statement Ingest",
+      "refId": "prm_arch_spec",
+      "status": "COMPLETED",
+      "icon": "file-text",
+      "x": 80,
+      "y": 150
+    },
+    {
+      "id": "deb_2",
+      "type": "code",
+      "label": "Architect Agent Proposal",
+      "refId": "skl_langgraph_builder",
+      "status": "COMPLETED",
+      "icon": "code",
+      "x": 320,
+      "y": 80
+    },
+    {
+      "id": "deb_3",
+      "type": "security",
+      "label": "Security Auditor Critique",
+      "refId": "prm_owasp_injection_defense",
+      "status": "IN_PROGRESS",
+      "icon": "shield-alert",
+      "x": 320,
+      "y": 220
+    },
+    {
+      "id": "deb_4",
+      "type": "test",
+      "label": "Debate & Consensus Arbiter",
+      "refId": null,
+      "status": "READY",
+      "icon": "check-circle",
+      "x": 600,
+      "y": 150
+    },
+    {
+      "id": "deb_5",
+      "type": "mcp",
+      "label": "Publish Decision RFC",
+      "refId": "mcp_filesystem",
+      "status": "READY",
+      "icon": "package",
+      "x": 840,
+      "y": 150
+    }
+  ],
+  "edges": [
+    {
+      "from": "deb_1",
+      "to": "deb_2",
+      "label": "Draft Request"
+    },
+    {
+      "from": "deb_1",
+      "to": "deb_3",
+      "label": "Threat Review"
+    },
+    {
+      "from": "deb_2",
+      "to": "deb_4",
+      "label": "Proposal Spec"
+    },
+    {
+      "from": "deb_3",
+      "to": "deb_4",
+      "label": "Security Concerns"
+    },
+    {
+      "from": "deb_4",
+      "to": "deb_5",
+      "label": "Consensus Approved"
+    }
+  ],
+  "created_at": "2026-08-25T11:00:00Z",
+  "updated_at": "2026-08-26T12:00:00Z"
+}

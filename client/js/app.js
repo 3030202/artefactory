@@ -7,12 +7,14 @@ import { skillsView } from './views/skillsView.js';
 import { workflowsView } from './views/workflowsView.js';
 import { mcpView } from './views/mcpView.js';
 import { rulesView } from './views/rulesView.js';
+import { gitopsView } from './views/gitopsView.js';
 
 class AppRouter {
   constructor() {
     this.routes = {
       dashboard: dashboardView,
       sources: sourcesView,
+      gitops: gitopsView,
       prompts: promptsView,
       skills: skillsView,
       workflows: workflowsView,

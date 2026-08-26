@@ -1,0 +1,111 @@
+{
+  "id": "wf_promptfoo_eval_matrix",
+  "title": "Promptfoo Multi-Model Evaluation & Regression Matrix DAG",
+  "category": "workflows",
+  "description": "Automated CI/CD matrix benchmarking Claude 3.7, Gemini 2.5, and Llama 3 across 500 test cases with cost, latency, and assertion scoring.",
+  "tags": [
+    "promptfoo",
+    "evals",
+    "benchmark",
+    "ci-cd",
+    "scoring"
+  ],
+  "version": "2.4.0",
+  "status": "READY",
+  "source_ref": "src_promptfoo",
+  "nodes": [
+    {
+      "id": "pf_1",
+      "type": "dataset",
+      "label": "Golden Assertion Dataset",
+      "refId": null,
+      "status": "READY",
+      "x": 80,
+      "y": 150
+    },
+    {
+      "id": "pf_2",
+      "type": "prompt",
+      "label": "Claude 3.7 Sonnet Inference",
+      "refId": "prm_arch_spec",
+      "status": "READY",
+      "x": 340,
+      "y": 80
+    },
+    {
+      "id": "pf_3",
+      "type": "prompt",
+      "label": "Gemini 2.5 Pro Inference",
+      "refId": "prm_code_reviewer",
+      "status": "READY",
+      "x": 340,
+      "y": 220
+    },
+    {
+      "id": "pf_4",
+      "type": "test",
+      "label": "LLM-as-a-Judge Assertion Scorer",
+      "refId": null,
+      "status": "READY",
+      "x": 620,
+      "y": 150
+    },
+    {
+      "id": "pf_5",
+      "type": "security",
+      "label": "CI/CD Pass/Fail Threshold (>95%)",
+      "refId": null,
+      "status": "READY",
+      "x": 880,
+      "y": 150
+    }
+  ],
+  "edges": [
+    {
+      "from": "pf_1",
+      "to": "pf_2",
+      "label": "Stream Cases"
+    },
+    {
+      "from": "pf_1",
+      "to": "pf_3",
+      "label": "Stream Cases"
+    },
+    {
+      "from": "pf_2",
+      "to": "pf_4",
+      "label": "Outputs A"
+    },
+    {
+      "from": "pf_3",
+      "to": "pf_4",
+      "label": "Outputs B"
+    },
+    {
+      "from": "pf_4",
+      "to": "pf_5",
+      "label": "Metrics Aggregated"
+    }
+  ],
+  "created_at": "2026-08-24T14:00:00Z",
+  "updated_at": "2026-08-26T12:29:51.130Z",
+  "source_title": "Promptfoo: LLM Evaluation, Red Teaming & CI/CD Security Matrix",
+  "source_url": "https://www.promptfoo.dev/docs",
+  "auto_synced": true,
+  "upstream_feed": true,
+  "in_tokens_est": 154,
+  "out_tokens_est": 250,
+  "last_synced_at": "2026-08-26T12:29:51.130Z",
+  "history": [
+    {
+      "version": "2.4.0",
+      "timestamp": "2026-08-26T12:29:51.130Z",
+      "note": "Update"
+    },
+    {
+      "version": "2.4.0",
+      "timestamp": "2026-08-26T12:29:49.166Z",
+      "note": "Update"
+    }
+  ]
+}
