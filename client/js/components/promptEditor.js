@@ -46,26 +46,26 @@ export class PromptEditor {
         </div>
 
         <!-- Editor Tabs Bar -->
-        <div style="display: flex; gap: 8px; border-bottom: 1px solid var(--border-subtle); padding: 0 20px; background: rgba(0,0,0,0.25); flex-shrink: 0;">
-          <button class="tab-btn active" data-tab="template" style="padding: 10px 14px; font-size: 12px; font-weight: 600; background: none; border: none; color: var(--text-primary); cursor: pointer; border-bottom: 2px solid var(--cat-prompts, #8b5cf6);">
+        <div style="display: flex; gap: 8px; border-bottom: 1px solid var(--border-subtle); padding: 0 16px; background: rgba(0,0,0,0.25); flex-shrink: 0; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch;">
+          <button class="tab-btn active" data-tab="template" style="padding: 10px 14px; font-size: 12px; font-weight: 600; background: none; border: none; color: var(--text-primary); cursor: pointer; border-bottom: 2px solid var(--cat-prompts, #8b5cf6); flex-shrink: 0;">
             📝 Template & Variables
           </button>
-          <button class="tab-btn" data-tab="schema" style="padding: 10px 14px; font-size: 12px; font-weight: 600; background: none; border: none; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent;">
+          <button class="tab-btn" data-tab="schema" style="padding: 10px 14px; font-size: 12px; font-weight: 600; background: none; border: none; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent; flex-shrink: 0;">
             📐 JSON Schema (Structured Output)
           </button>
-          <button class="tab-btn" data-tab="playground" style="padding: 10px 14px; font-size: 12px; font-weight: 600; background: none; border: none; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent;">
+          <button class="tab-btn" data-tab="playground" style="padding: 10px 14px; font-size: 12px; font-weight: 600; background: none; border: none; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent; flex-shrink: 0;">
             🧪 Test Playground & Live Preview
           </button>
-          <button class="tab-btn" data-tab="cost" style="padding: 10px 14px; font-size: 12px; font-weight: 600; background: none; border: none; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent;">
+          <button class="tab-btn" data-tab="cost" style="padding: 10px 14px; font-size: 12px; font-weight: 600; background: none; border: none; color: var(--text-secondary); cursor: pointer; border-bottom: 2px solid transparent; flex-shrink: 0;">
             📊 Token Metrics & Cost Estimator
           </button>
         </div>
 
         <!-- Scrollable Modal Body -->
-        <div class="modal-body" id="prompt-editor-body" style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+        <div class="modal-body" id="prompt-editor-body" style="flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px;">
           
           <!-- Top Metadata Form Row -->
-          <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px;">
+          <div class="prompt-editor-top-grid">
             <div class="form-group" style="margin: 0;">
               <label class="form-label" style="font-size: 11.5px;">Prompt Title *</label>
               <input type="text" class="form-input" id="inp-prompt-title" value="${p.title || ''}" placeholder="e.g. LangChain Agent ReAct Supervisor" required>
@@ -122,7 +122,7 @@ export class PromptEditor {
 
           <!-- Tab 2: JSON Schema Validator -->
           <div id="tab-content-schema" class="editor-tab-pane" style="display: none; flex-direction: column; gap: 10px;">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
               <div>
                 <div style="font-size: 12px; font-weight: 700; color: var(--text-primary);">Structured Outputs JSON Schema</div>
                 <div style="font-size: 11px; color: var(--text-secondary);">Defines required response format for OpenAI Structured Outputs, Anthropic Tool calling, or Pydantic validation</div>
@@ -142,7 +142,7 @@ export class PromptEditor {
 
           <!-- Tab 3: Test Playground -->
           <div id="tab-content-playground" class="editor-tab-pane" style="display: none; flex-direction: column; gap: 12px;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="prompt-playground-grid">
               <!-- Left: Variable Inputs -->
               <div style="display: flex; flex-direction: column; gap: 8px;">
                 <div style="font-size: 12px; font-weight: 700; color: var(--text-primary);">Test Variable Values</div>
@@ -164,7 +164,7 @@ export class PromptEditor {
           <div id="tab-content-cost" class="editor-tab-pane" style="display: none; flex-direction: column; gap: 14px;">
             <div style="font-size: 12px; font-weight: 700; color: var(--text-primary);">Multi-Model Cost Matrix (Estimated per 1,000 requests)</div>
             
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;" id="cost-matrix-cards">
+            <div class="prompt-cost-grid" id="cost-matrix-cards">
               <!-- Dynamically rendered -->
             </div>
           </div>

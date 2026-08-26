@@ -68,9 +68,13 @@ class AppRouter {
       this.openMobileMoreSheet();
     });
 
-    // Mobile Hamburger Toggle
+    // Mobile Hamburger Toggle & Close Button
     document.getElementById('btn-toggle-mobile-menu')?.addEventListener('click', () => {
       this.toggleMobileDrawer();
+    });
+
+    document.getElementById('btn-close-mobile-drawer')?.addEventListener('click', () => {
+      this.closeMobileDrawer();
     });
 
     // Mobile Drawer Backdrop click
@@ -86,6 +90,7 @@ class AppRouter {
 
     document.getElementById('mobile-brand-btn')?.addEventListener('click', () => {
       this.navigate('dashboard');
+      this.closeMobileDrawer();
     });
 
     // TUI Mode Toggle buttons
@@ -219,11 +224,13 @@ class AppRouter {
   openMobileDrawer() {
     this.sidebar?.classList.add('open');
     this.drawerBackdrop?.classList.add('open');
+    document.body.style.overflow = 'hidden';
   }
 
   closeMobileDrawer() {
     this.sidebar?.classList.remove('open');
     this.drawerBackdrop?.classList.remove('open');
+    document.body.style.overflow = '';
   }
 
   async updateStatsCounters() {

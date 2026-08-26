@@ -61,7 +61,7 @@ export const workflowsView = {
       </div>
 
       <!-- Main Layout: Left Selector & Right Interactive Canvas -->
-      <div style="display: grid; grid-template-columns: 340px 1fr; gap: 20px; align-items: start;">
+      <div class="workflows-layout-grid">
         <!-- Left: Workflow List -->
         <div style="display: flex; flex-direction: column; gap: 12px;">
           <div class="search-input-wrapper">

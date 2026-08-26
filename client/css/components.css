@@ -216,9 +216,10 @@
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(4, 7, 14, 0.75);
-  backdrop-filter: blur(8px);
-  z-index: 1000;
+  background: rgba(4, 7, 14, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 2000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -677,8 +678,59 @@
   height: 5px;
   background: rgba(255, 255, 255, 0.25);
   border-radius: var(--radius-pill);
-  margin: 8px auto 4px;
+  margin: 8px auto 6px;
   cursor: grab;
+}
+
+/* ==========================================================================
+   Responsive Multi-Column Grids
+   ========================================================================== */
+.workflows-layout-grid {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+
+.prompt-editor-top-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 12px;
+}
+
+.prompt-playground-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.prompt-cost-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.mcp-inspector-body {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 16px;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.mcp-json-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  flex: 1;
+  min-height: 220px;
+}
+
+@media (max-width: 1024px) {
+  .workflows-layout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -686,11 +738,12 @@
     display: block;
   }
 
-  /* Transform Centered Modals into Native Bottom Sheets */
+  /* Transform Centered Modals into Ergonomic Native Bottom Sheets */
   .modal-backdrop,
   .omni-backdrop {
     padding: 0 !important;
     align-items: flex-end !important;
+    z-index: 2000 !important;
   }
 
   .modal-window,
@@ -698,19 +751,11 @@
   .omni-dialog {
     max-width: 100% !important;
     width: 100% !important;
-    max-height: 88vh !important;
+    max-height: 92vh !important;
     border-radius: 20px 20px 0 0 !important;
     border-bottom: none !important;
-    transform: translateY(100%) !important;
     margin: 0 !important;
-    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8) !important;
-    transition: transform var(--transition-smooth) !important;
-  }
-
-  .modal-backdrop.open .modal-window,
-  .modal-backdrop.open .modal,
-  .omni-backdrop .omni-dialog,
-  .modal-backdrop .modal {
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.85) !important;
     transform: translateY(0) !important;
   }
 
@@ -719,29 +764,60 @@
   }
 
   .modal-body {
-    padding: 16px 18px !important;
-    gap: 14px !important;
+    padding: 14px 16px !important;
+    gap: 12px !important;
+    max-height: calc(92vh - 120px) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
   }
 
   .modal-footer {
-    padding: 14px 18px !important;
+    padding: 12px 16px !important;
     flex-wrap: wrap !important;
     gap: 8px !important;
   }
 
-  /* Stack Split Pane Editors Vertically */
+  /* Collapse Multi-column Modal Layouts on Mobile */
+  .prompt-editor-top-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+
+  .prompt-playground-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .prompt-cost-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .mcp-inspector-body {
+    grid-template-columns: 1fr !important;
+    padding: 12px !important;
+    gap: 12px !important;
+    overflow-y: auto !important;
+  }
+
+  .mcp-json-split {
+    grid-template-columns: 1fr !important;
+    min-height: auto !important;
+    gap: 10px !important;
+  }
+
   .split-pane {
     grid-template-columns: 1fr !important;
     gap: 12px !important;
+    height: auto !important;
   }
 
-  /* Single Column Card Grids on Mobile */
   .cards-grid {
     grid-template-columns: 1fr !important;
-    gap: 12px !important;
+    gap: 10px !important;
   }
 
-  /* Forms & Touch Targets */
+  /* Touch Targets & Forms */
   .form-control,
   .form-input,
   .form-select,
@@ -752,28 +828,32 @@
 
   .btn {
     min-height: 40px !important;
+    touch-action: manipulation;
   }
 
   /* DAG Canvas Mobile Adaptation */
   .dag-wrapper {
-    height: 320px !important;
+    height: 300px !important;
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch;
   }
 
   .dag-canvas {
-    min-width: 600px !important;
+    min-width: 550px !important;
   }
 
   /* Dense Table Horizontal Swipe */
   .dense-table-wrapper {
-    margin: 0 -14px;
+    margin: 0 -12px;
     border-radius: 0;
     border-left: none;
     border-right: none;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
-  /* Tag & Filter Chips Horizontal Swipe */
+  /* Horizontal Chips Scrolling */
+  .category-chips-bar,
   .tag-chips-container,
   .omni-filter-chips {
     flex-wrap: nowrap !important;
@@ -783,6 +863,7 @@
     scrollbar-width: none;
   }
 
+  .category-chips-bar::-webkit-scrollbar,
   .tag-chips-container::-webkit-scrollbar,
   .omni-filter-chips::-webkit-scrollbar {
     display: none;

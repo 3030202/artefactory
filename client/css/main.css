@@ -18,6 +18,11 @@
   --border-medium: rgba(255, 255, 255, 0.12);
   --border-active: rgba(255, 255, 255, 0.25);
 
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+
   /* Typography */
   --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-display: 'Inter', var(--font-main);
@@ -356,14 +361,16 @@ html, body {
 /* Mobile Header (Hidden on Desktop) */
 .mobile-header-bar {
   display: none;
-  height: 56px;
-  background: rgba(15, 23, 42, 0.85);
+  height: calc(52px + var(--safe-top));
+  padding-top: var(--safe-top);
+  background: rgba(17, 19, 24, 0.95);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border-bottom: 1px solid var(--border-subtle);
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
+  padding-left: max(12px, var(--safe-left));
+  padding-right: max(12px, var(--safe-right));
   position: sticky;
   top: 0;
   z-index: 90;
@@ -373,44 +380,49 @@ html, body {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid var(--border-subtle);
   color: var(--text-primary);
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .mobile-brand-title {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 16px;
+  font-size: 15px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   color: var(--text-primary);
+  cursor: pointer;
+  user-select: none;
 }
 
 /* Mobile Floating Bottom Navigation Dock (Ergonomic 5-Item Dock) */
 .mobile-bottom-dock {
   display: none;
   position: fixed;
-  bottom: max(12px, var(--safe-bottom));
+  bottom: max(10px, var(--safe-bottom));
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - 24px);
-  max-width: 440px;
-  background: rgba(17, 19, 24, 0.92);
+  width: calc(100% - 20px);
+  max-width: 420px;
+  background: rgba(17, 19, 24, 0.95);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: var(--radius-pill);
-  padding: 6px 8px;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.8), 0 0 20px var(--theme-glow-faint, rgba(99, 102, 241, 0.15));
+  padding: 4px 6px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.85), 0 0 20px var(--theme-glow-faint, rgba(99, 102, 241, 0.15));
   z-index: 950;
   justify-content: space-between;
   align-items: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .dock-item {
@@ -421,12 +433,13 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: 3px 2px;
   border-radius: var(--radius-pill);
   cursor: pointer;
   transition: all var(--transition-fast);
   color: var(--text-muted);
   user-select: none;
+  touch-action: manipulation;
 }
 
 .dock-icon {
@@ -438,7 +451,7 @@ html, body {
 }
 
 .dock-label {
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 600;
   line-height: 1;
   letter-spacing: 0.1px;
@@ -466,11 +479,16 @@ html, body {
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  z-index: 99;
+  z-index: 1500;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
 }
 
 .mobile-drawer-backdrop.open {
   display: block;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* Buttons */
@@ -588,6 +606,10 @@ html, body {
     display: flex !important;
   }
 
+  .mobile-only-btn {
+    display: flex !important;
+  }
+
   /* Transform Sidebar into Slide-out Drawer */
   .sidebar {
     position: fixed;
@@ -597,8 +619,10 @@ html, body {
     width: 280px;
     min-width: 280px;
     transform: translateX(-100%);
-    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.8);
-    z-index: 1000;
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.85);
+    z-index: 1600;
+    padding-top: max(20px, var(--safe-top));
+    padding-bottom: max(20px, var(--safe-bottom));
   }
 
   .sidebar.open {
@@ -610,13 +634,22 @@ html, body {
   }
 
   .page-container {
-    padding: 16px 14px max(96px, calc(70px + var(--safe-bottom))) !important;
+    padding: 16px 14px calc(88px + var(--safe-bottom)) !important;
   }
 
   .section-hero {
     flex-direction: column !important;
     align-items: stretch !important;
-    gap: 16px !important;
+    gap: 14px !important;
+  }
+
+  .section-hero .header-actions {
+    flex-wrap: wrap !important;
+    width: 100% !important;
+  }
+
+  .section-hero .header-actions .btn {
+    flex: 1 1 auto !important;
   }
 
   .section-hero .flex-center {

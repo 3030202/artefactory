@@ -3,21 +3,15 @@ import { Toast } from './toast.js';
 import { Icons } from './icons.js';
 
 export class GitStatusBar {
-  static container = null;
   static statusData = null;
 
   static init() {
-    this.container = document.getElementById('topbar-git-status');
-    if (!this.container) return;
-
     this.refreshStatus();
     // Poll every 45s or refresh on demand
     setInterval(() => this.refreshStatus(), 45000);
   }
 
   static async refreshStatus() {
-    if (!this.container) return;
-
     try {
       const res = await api.getGitStatus();
       this.statusData = res.data || {};
@@ -28,26 +22,33 @@ export class GitStatusBar {
   }
 
   static render() {
-    if (!this.container || !this.statusData) return;
+    if (!this.statusData) return;
 
     const s = this.statusData;
     const branch = s.branch || 'main';
     const modifiedCount = (s.modified || []).length + (s.untracked || []).length;
     const isClean = s.clean || modifiedCount === 0;
 
-    this.container.innerHTML = `
-      <div class="git-status-badge ${isClean ? 'clean' : 'dirty'}" id="btn-open-git-popover" title="Click to view GitOps status & Quick Commit" style="display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle); border-radius: var(--radius-pill); cursor: pointer; transition: all var(--transition-fast);">
-        <span style="color: var(--cat-gitops, #ec4899); display: flex; align-items: center;">${Icons.gitops(14)}</span>
-        <span style="font-size: 11px; font-weight: 700; font-family: var(--font-mono); color: var(--text-primary);">${branch}</span>
-        <span class="badge ${isClean ? 'badge-success' : 'badge-danger'}" style="font-size: 9px; padding: 1px 5px; text-transform: none;">
-          ${isClean ? 'Clean' : `● ${modifiedCount} dirty`}
-        </span>
-      </div>
-    `;
+    const containers = [
+      document.getElementById('topbar-git-status'),
+      document.getElementById('mobile-topbar-git-status')
+    ].filter(Boolean);
 
-    this.container.querySelector('#btn-open-git-popover')?.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.openQuickGitModal();
+    containers.forEach(c => {
+      c.innerHTML = `
+        <div class="git-status-badge ${isClean ? 'clean' : 'dirty'}" title="Click to view GitOps status & Quick Commit" style="display: flex; align-items: center; gap: 6px; padding: 4px 8px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-subtle); border-radius: var(--radius-pill); cursor: pointer; transition: all var(--transition-fast); user-select: none;">
+          <span style="color: var(--cat-gitops, #ec4899); display: flex; align-items: center;">${Icons.gitops(14)}</span>
+          <span style="font-size: 11px; font-weight: 700; font-family: var(--font-mono); color: var(--text-primary);">${branch}</span>
+          <span class="badge ${isClean ? 'badge-success' : 'badge-danger'}" style="font-size: 9px; padding: 1px 5px; text-transform: none;">
+            ${isClean ? 'Clean' : `● ${modifiedCount}`}
+          </span>
+        </div>
+      `;
+
+      c.querySelector('.git-status-badge')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.openQuickGitModal();
+      });
     });
   }
 

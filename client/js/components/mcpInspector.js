@@ -43,7 +43,7 @@ export class McpInspector {
         </div>
 
         <!-- Main Body: Left Tool/Method Picker & Right Split Inspector -->
-        <div class="modal-body" style="flex: 1; display: grid; grid-template-columns: 280px 1fr; gap: 16px; padding: 16px; overflow: hidden;">
+        <div class="modal-body mcp-inspector-body" style="flex: 1;">
           
           <!-- Left Column: Methods & Tools List -->
           <div style="display: flex; flex-direction: column; gap: 10px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 12px; overflow-y: auto;">
@@ -100,7 +100,7 @@ export class McpInspector {
             </div>
 
             <!-- Split JSON Inspector (Request & Response) -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex: 1; min-height: 220px;">
+            <div class="mcp-json-split">
               
               <!-- Request JSON Editor -->
               <div style="display: flex; flex-direction: column; background: #05070d; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); overflow: hidden;">
