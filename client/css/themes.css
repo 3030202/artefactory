@@ -1,0 +1,147 @@
+/* ==========================================================================
+   Category Themes & Dynamic Color Palettes for Control Tower
+   ========================================================================== */
+
+/* 1. Global / Dashboard Theme */
+body[data-theme="dashboard"],
+#app-root[data-theme="dashboard"] {
+  --theme-color: #6366f1;
+  --theme-glow: rgba(99, 102, 241, 0.35);
+  --theme-glow-faint: rgba(99, 102, 241, 0.12);
+  --nav-active-bg: rgba(99, 102, 241, 0.15);
+  --nav-active-border: rgba(99, 102, 241, 0.35);
+  --ambient-1: rgba(99, 102, 241, 0.1);
+  --ambient-2: rgba(139, 92, 246, 0.08);
+}
+
+/* 2. Prompts Theme (Electric Violet & Indigo) */
+body[data-theme="prompts"],
+#app-root[data-theme="prompts"] {
+  --theme-color: #8b5cf6;
+  --theme-color-secondary: #6366f1;
+  --theme-glow: rgba(139, 92, 246, 0.4);
+  --theme-glow-faint: rgba(139, 92, 246, 0.15);
+  --nav-active-bg: rgba(139, 92, 246, 0.18);
+  --nav-active-border: rgba(139, 92, 246, 0.4);
+  --ambient-1: rgba(139, 92, 246, 0.18);
+  --ambient-2: rgba(99, 102, 241, 0.12);
+}
+
+/* 3. Skills Theme (Emerald & Mint) */
+body[data-theme="skills"],
+#app-root[data-theme="skills"] {
+  --theme-color: #10b981;
+  --theme-color-secondary: #059669;
+  --theme-glow: rgba(16, 185, 129, 0.4);
+  --theme-glow-faint: rgba(16, 185, 129, 0.15);
+  --nav-active-bg: rgba(16, 185, 129, 0.18);
+  --nav-active-border: rgba(16, 185, 129, 0.4);
+  --ambient-1: rgba(16, 185, 129, 0.16);
+  --ambient-2: rgba(5, 150, 105, 0.1);
+}
+
+/* 4. Workflows Theme (Solar Amber & Gold) */
+body[data-theme="workflows"],
+#app-root[data-theme="workflows"] {
+  --theme-color: #f59e0b;
+  --theme-color-secondary: #d97706;
+  --theme-glow: rgba(245, 158, 11, 0.4);
+  --theme-glow-faint: rgba(245, 158, 11, 0.15);
+  --nav-active-bg: rgba(245, 158, 11, 0.18);
+  --nav-active-border: rgba(245, 158, 11, 0.4);
+  --ambient-1: rgba(245, 158, 11, 0.16);
+  --ambient-2: rgba(217, 119, 6, 0.1);
+}
+
+/* 5. MCP Servers Theme (Cyber Cyan & Electric Blue) */
+body[data-theme="mcp"],
+#app-root[data-theme="mcp"] {
+  --theme-color: #06b6d4;
+  --theme-color-secondary: #0284c7;
+  --theme-glow: rgba(6, 182, 212, 0.4);
+  --theme-glow-faint: rgba(6, 182, 212, 0.15);
+  --nav-active-bg: rgba(6, 182, 212, 0.18);
+  --nav-active-border: rgba(6, 182, 212, 0.4);
+  --ambient-1: rgba(6, 182, 212, 0.16);
+  --ambient-2: rgba(2, 132, 199, 0.1);
+}
+
+/* 6. Rules & Directives Theme (Neon Rose & Magenta) */
+body[data-theme="rules"],
+#app-root[data-theme="rules"] {
+  --theme-color: #f43f5e;
+  --theme-color-secondary: #e11d48;
+  --theme-glow: rgba(244, 63, 94, 0.4);
+  --theme-glow-faint: rgba(244, 63, 94, 0.15);
+  --nav-active-bg: rgba(244, 63, 94, 0.18);
+  --nav-active-border: rgba(244, 63, 94, 0.4);
+  --ambient-1: rgba(244, 63, 94, 0.16);
+  --ambient-2: rgba(225, 29, 72, 0.1);
+}
+
+/* Category Badge Classes */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  line-height: 1;
+}
+
+.badge-prompts {
+  background: rgba(139, 92, 246, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+
+.badge-skills {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-workflows {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge-mcp {
+  background: rgba(6, 182, 212, 0.15);
+  color: #22d3ee;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.badge-rules {
+  background: rgba(244, 63, 94, 0.15);
+  color: #fb7185;
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.badge-version {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+}
+
+.badge-success {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
