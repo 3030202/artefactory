@@ -172,20 +172,25 @@ class AppRouter {
         <div class="modal-drag-handle"></div>
         <div class="omni-input-bar">
           <span style="font-size: 18px;">🔍</span>
-          <input type="text" class="omni-search-input" id="omni-query" placeholder="Глобальный поиск (Ctrl+K)..." autofocus>
+          <input type="text" class="omni-search-input" id="omni-query" placeholder="Поиск по смыслу или ключевым словам (Ctrl+K)..." autofocus>
           <span class="omni-kbd">ESC</span>
         </div>
-        <div class="omni-filter-chips">
-          <button class="omni-filter active" data-cat="all">All</button>
-          <button class="omni-filter" data-cat="sources">Sources</button>
-          <button class="omni-filter" data-cat="prompts">Prompts</button>
-          <button class="omni-filter" data-cat="skills">Skills</button>
-          <button class="omni-filter" data-cat="workflows">Workflows</button>
-          <button class="omni-filter" data-cat="mcp_servers">MCP</button>
-          <button class="omni-filter" data-cat="rules">Rules</button>
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 14px; border-bottom: 1px solid var(--border-subtle); background: rgba(0,0,0,0.2);">
+          <div class="omni-filter-chips" style="border: none; padding: 0;">
+            <button class="omni-filter active" data-cat="all">All</button>
+            <button class="omni-filter" data-cat="sources">Sources</button>
+            <button class="omni-filter" data-cat="prompts">Prompts</button>
+            <button class="omni-filter" data-cat="skills">Skills</button>
+            <button class="omni-filter" data-cat="workflows">Workflows</button>
+            <button class="omni-filter" data-cat="mcp_servers">MCP</button>
+            <button class="omni-filter" data-cat="rules">Rules</button>
+          </div>
+          <button id="btn-toggle-search-mode" class="badge badge-prompts" style="cursor: pointer; padding: 4px 8px; font-size: 11px;">
+            <span>🧠 Semantic Mode</span>
+          </button>
         </div>
         <div class="omni-results-list" id="omni-results">
-          <div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 13px;">Введите поисковый запрос (например: MCP, architecture, security, langgraph)...</div>
+          <div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 13px;">Введите запрос (например: <em>защита от инъекций</em>, <em>многоагентный роутер</em>, <em>mcp github</em>)...</div>
         </div>
       </div>
     `;
@@ -194,7 +199,16 @@ class AppRouter {
 
     const input = backdrop.querySelector('#omni-query');
     const resultsContainer = backdrop.querySelector('#omni-results');
+    const modeBtn = backdrop.querySelector('#btn-toggle-search-mode');
     let currentCat = 'all';
+    let isSemanticMode = true;
+
+    modeBtn.addEventListener('click', () => {
+      isSemanticMode = !isSemanticMode;
+      modeBtn.innerHTML = isSemanticMode ? '<span>🧠 Semantic Mode</span>' : '<span>🔤 Keyword Mode</span>';
+      modeBtn.className = isSemanticMode ? 'badge badge-prompts' : 'badge badge-version';
+      doSearch();
+    });
 
     input.focus();
 
@@ -206,8 +220,14 @@ class AppRouter {
       }
 
       try {
-        const res = await api.omniSearch(q, currentCat);
-        const results = res.results || [];
+        let results = [];
+        if (isSemanticMode) {
+          const res = await api.searchSemantic({ q, category: currentCat, limit: 10 });
+          results = res.results || [];
+        } else {
+          const res = await api.omniSearch(q, currentCat);
+          results = res.results || [];
+        }
 
         if (results.length === 0) {
           resultsContainer.innerHTML = `<div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 13px;">Ничего не найдено по запросу "${q}"</div>`;
@@ -223,6 +243,7 @@ class AppRouter {
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span class="omni-result-title">${r.title}</span>
                 <span class="badge badge-version">${r.typeLabel}</span>
+                ${r.relevancePercent ? `<span class="badge badge-success" style="font-size: 10px;">🎯 ${r.relevancePercent}% Match</span>` : ''}
                 ${r.version ? `<span class="badge badge-version">v${r.version}</span>` : ''}
               </div>
               <div class="omni-result-desc">${r.description || ''}</div>

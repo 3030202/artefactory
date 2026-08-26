@@ -63,6 +63,31 @@ export const mcpView = {
         </div>
       </div>
 
+      <!-- Native Control Tower MCP Server Gateway Banner -->
+      <div style="background: rgba(6, 182, 212, 0.08); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: var(--radius-lg); padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="font-size: 28px;">📡</div>
+          <div>
+            <div style="font-size: 15px; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
+              <span>Native Control Tower MCP Gateway</span>
+              <span class="badge badge-success">● SSE Transport Active</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">
+              Подключите Claude Desktop, Cursor или Antigravity к эндпоинту: <code style="color: #22d3ee; font-weight: 700;">${window.location.origin}/mcp/sse</code>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button class="btn btn-secondary btn-sm" id="btn-open-gateway-tester">
+            <span>⚡</span> Test JSON-RPC Tools
+          </button>
+          <button class="btn btn-primary btn-sm" id="btn-copy-claude-config" style="background: var(--cat-mcp, #06b6d4);">
+            <span>📋</span> Copy Claude / Cursor Config
+          </button>
+        </div>
+      </div>
+
       <!-- Filters & Transport Selector -->
       <div class="filter-bar">
         <div class="search-input-wrapper">
@@ -161,6 +186,22 @@ export const mcpView = {
         this.selectedTransport = chip.getAttribute('data-transport');
         this.renderUI(container);
       });
+    });
+
+    container.querySelector('#btn-copy-claude-config')?.addEventListener('click', () => {
+      const config = {
+        mcpServers: {
+          "artefactory-control-tower": {
+            url: `${window.location.origin}/mcp/sse`
+          }
+        }
+      };
+      navigator.clipboard.writeText(JSON.stringify(config, null, 2));
+      Toast.success('Claude Desktop / Cursor config copied to clipboard!');
+    });
+
+    container.querySelector('#btn-open-gateway-tester')?.addEventListener('click', () => {
+      this.openGatewayTesterModal();
     });
 
     container.querySelector('#btn-create-mcp')?.addEventListener('click', () => {
@@ -463,6 +504,126 @@ export const mcpView = {
     });
     backdrop.querySelectorAll('.btn-close-modal').forEach(b => {
       b.addEventListener('click', () => backdrop.remove());
+    });
+  },
+
+  // Modal: Native Gateway Tester
+  openGatewayTesterModal() {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop open';
+
+    backdrop.innerHTML = `
+      <div class="modal-window modal-wide">
+        <div class="modal-drag-handle"></div>
+        <div class="modal-header">
+          <div class="modal-title">
+            <span>📡</span>
+            <span>Native Control Tower MCP JSON-RPC Gateway Tester</span>
+          </div>
+          <button class="btn-icon btn-close-modal">✕</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="split-pane">
+            <!-- Left: Tool & Parameters -->
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <div>
+                <label class="form-label">Available Gateway Tool</label>
+                <select class="form-select" id="gw-tool-name">
+                  <option value="search_artifacts">search_artifacts (Semantic/Keyword)</option>
+                  <option value="get_prompt">get_prompt (Retrieve template & tokens)</option>
+                  <option value="list_prompts">list_prompts (Catalog)</option>
+                  <option value="get_skill">get_skill (SKILL.md)</option>
+                  <option value="get_system_rules">get_system_rules (AGENTS.md)</option>
+                  <option value="sync_from_sources">sync_from_sources (Dynamic Harvest)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="form-label">Tool Arguments (JSON)</label>
+                <textarea class="form-textarea" id="gw-tool-args" rows="6" style="font-family: var(--font-mono); font-size: 12px;">{\n  "query": "OWASP security injection",\n  "semantic": true,\n  "limit": 3\n}</textarea>
+              </div>
+
+              <div style="padding: 10px 14px; background: rgba(6, 182, 212, 0.08); border: 1px solid rgba(6, 182, 212, 0.25); border-radius: var(--radius-md); font-size: 11px; color: var(--text-secondary);">
+                💡 Вызов выполняется по протоколу <code>JSON-RPC 2.0</code> через эндпоинт <code>POST /mcp/messages</code>.
+              </div>
+            </div>
+
+            <!-- Right: JSON-RPC Response Output -->
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <div class="pane-header">
+                <span>Response Output</span>
+                <span class="badge badge-mcp" id="gw-status-badge">Ready</span>
+              </div>
+              <pre id="gw-output" style="background: #050811; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 12px; font-family: var(--font-mono); font-size: 11px; color: #34d399; height: 230px; overflow-y: auto; white-space: pre-wrap;">Нажмите "Execute Tool" для отправки запроса...</pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary btn-close-modal">Закрыть</button>
+          <button class="btn btn-primary" id="btn-execute-gw-tool" style="background: var(--cat-mcp, #06b6d4);">
+            <span>⚡</span> Execute Tool
+          </button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(backdrop);
+    backdrop.querySelectorAll('.btn-close-modal').forEach(b => b.addEventListener('click', () => backdrop.remove()));
+
+    const toolSelect = backdrop.querySelector('#gw-tool-name');
+    const argsTextarea = backdrop.querySelector('#gw-tool-args');
+    const outputBox = backdrop.querySelector('#gw-output');
+    const statusBadge = backdrop.querySelector('#gw-status-badge');
+
+    // Preset argument templates
+    toolSelect.addEventListener('change', () => {
+      const tool = toolSelect.value;
+      if (tool === 'search_artifacts') {
+        argsTextarea.value = JSON.stringify({ query: 'OWASP security injection', semantic: true, limit: 3 }, null, 2);
+      } else if (tool === 'get_prompt') {
+        argsTextarea.value = JSON.stringify({ id: 'prm_anthropic_system_metaprompt', variables: {} }, null, 2);
+      } else if (tool === 'list_prompts') {
+        argsTextarea.value = JSON.stringify({ tag: 'anthropic' }, null, 2);
+      } else if (tool === 'get_skill') {
+        argsTextarea.value = JSON.stringify({ name: 'mcp-sse-bridge' }, null, 2);
+      } else if (tool === 'get_system_rules') {
+        argsTextarea.value = JSON.stringify({ priority: 'ALL' }, null, 2);
+      } else if (tool === 'sync_from_sources') {
+        argsTextarea.value = JSON.stringify({ sourceId: 'src_mcp_spec' }, null, 2);
+      }
+    });
+
+    backdrop.querySelector('#btn-execute-gw-tool')?.addEventListener('click', async () => {
+      const toolName = toolSelect.value;
+      let args = {};
+      try {
+        args = JSON.parse(argsTextarea.value);
+      } catch (err) {
+        Toast.error('Invalid JSON in Arguments');
+        return;
+      }
+
+      statusBadge.textContent = 'Calling...';
+      statusBadge.className = 'badge badge-warning';
+      outputBox.textContent = 'Executing JSON-RPC tools/call...';
+
+      try {
+        const start = Date.now();
+        const res = await api.callMcpGatewayTool(toolName, args);
+        const duration = Date.now() - start;
+
+        statusBadge.textContent = `200 OK (${duration}ms)`;
+        statusBadge.className = 'badge badge-success';
+        outputBox.textContent = JSON.stringify(res, null, 2);
+        Toast.success(`MCP Tool '${toolName}' executed in ${duration}ms!`);
+      } catch (err) {
+        statusBadge.textContent = 'Error';
+        statusBadge.className = 'badge badge-danger';
+        outputBox.textContent = `Error: ${err.message}`;
+        Toast.error(err.message || 'Execution error');
+      }
     });
   }
 };

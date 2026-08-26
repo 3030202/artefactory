@@ -12,6 +12,7 @@ import searchRouter from './routes/search.js';
 import systemRouter from './routes/system.js';
 import sourcesRouter from './routes/sources.js';
 import { gitopsRouter } from './routes/gitops.js';
+import { mcpGateway } from './mcp_gateway.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,11 +30,23 @@ app.use((req, res, next) => {
   const start = Date.now();
   res.on('finish', () => {
     const duration = Date.now() - start;
-    if (req.path.startsWith('/api')) {
+    if (req.path.startsWith('/api') || req.path.startsWith('/mcp')) {
       console.log(`[${req.method}] ${req.path} -> ${res.statusCode} (${duration}ms)`);
     }
   });
   next();
+});
+
+// Native MCP Gateway Protocol Endpoints (for Claude Desktop, Cursor, Antigravity)
+app.get('/mcp/sse', (req, res) => mcpGateway.handleSSEConnection(req, res));
+app.post('/mcp/messages', (req, res) => mcpGateway.handleMessage(req, res));
+app.get('/mcp/schema', async (req, res) => {
+  const mockReq = { body: { method: 'tools/list', id: 1 }, query: {} };
+  const mockRes = {
+    json: (data) => res.json(data),
+    status: () => mockRes
+  };
+  await mcpGateway.handleMessage(mockReq, mockRes);
 });
 
 // API Routes
@@ -52,6 +65,7 @@ app.get('/health', (req, res) => {
   res.json({
     status: 'HEALTHY',
     service: 'Prompt Ops Control Tower (artefactory)',
+    mcp_gateway: 'ONLINE (/mcp/sse)',
     timestamp: new Date().toISOString(),
     version: '2.0.0-prod'
   });

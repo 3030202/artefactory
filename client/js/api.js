@@ -117,6 +117,30 @@ export const api = {
   exportGitOps() { return this.request('/gitops/export', { method: 'POST' }); },
   commitGitOps(data) { return this.request('/gitops/commit', { method: 'POST', body: JSON.stringify(data) }); },
   pullGitOps() { return this.request('/gitops/pull', { method: 'POST' }); },
-  setGitOpsSession(data) { return this.request('/gitops/auth/session', { method: 'POST', body: JSON.stringify(data) }); }
+  setGitOpsSession(data) { return this.request('/gitops/auth/session', { method: 'POST', body: JSON.stringify(data) }); },
+
+  // Semantic Vector Search & Agentic RAG
+  searchSemantic(params = {}) {
+    return this.request('/search/semantic', { method: 'POST', body: JSON.stringify(params) });
+  },
+  reindexSemantic() {
+    return this.request('/search/reindex', { method: 'POST' });
+  },
+
+  // Native Control Tower MCP Gateway
+  getMcpGatewaySchema() {
+    return this.request('/mcp/schema');
+  },
+  callMcpGatewayTool(name, args = {}) {
+    return this.request('/mcp/messages?sessionId=web_client', {
+      method: 'POST',
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        method: 'tools/call',
+        params: { name, arguments: args },
+        id: Date.now()
+      })
+    });
+  }
 };
 
