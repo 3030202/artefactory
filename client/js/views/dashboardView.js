@@ -28,6 +28,9 @@ export const dashboardView = {
             </div>
           </div>
           <div class="header-actions">
+            <button class="btn btn-primary" id="btn-dash-sync" style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); border: none; box-shadow: 0 0 15px rgba(59, 130, 246, 0.35);">
+              <span>⚡</span> Dynamic Ingestion
+            </button>
             <button class="btn btn-secondary" id="btn-export-backup">
               <span>💾</span> Export Backup
             </button>
@@ -201,6 +204,13 @@ export const dashboardView = {
       `;
 
       // Event handlers
+      document.getElementById('btn-dash-sync')?.addEventListener('click', () => {
+        window.appRouter.navigate('sources');
+        setTimeout(() => {
+          document.getElementById('btn-trigger-sync')?.click();
+        }, 100);
+      });
+
       document.getElementById('btn-export-backup')?.addEventListener('click', async () => {
         const res = await api.exportBundle();
         Toast.success(`Backup saved to ${res.backup_file}`);

@@ -105,6 +105,9 @@ export const api = {
   createSource(data) { return this.request('/sources', { method: 'POST', body: JSON.stringify(data) }); },
   updateSource(id, data) { return this.request(`/sources/${id}`, { method: 'PUT', body: JSON.stringify(data) }); },
   deleteSource(id) { return this.request(`/sources/${id}`, { method: 'DELETE' }); },
-  convertSource(id, targetType) { return this.request(`/sources/${id}/convert`, { method: 'POST', body: JSON.stringify({ targetType }) }); }
+  convertSource(id, targetType) { return this.request(`/sources/${id}/convert`, { method: 'POST', body: JSON.stringify({ targetType }) }); },
+  syncSources(options = {}) { return this.request('/sources/sync', { method: 'POST', body: JSON.stringify(options) }); },
+  syncSource(id) { return this.request(`/sources/${id}/sync`, { method: 'POST' }); },
+  getSyncStatus() { return this.request('/sources/sync/status'); }
 };
 

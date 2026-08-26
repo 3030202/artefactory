@@ -175,6 +175,7 @@
   line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -620,4 +621,51 @@
   color: var(--theme-color, #3b82f6);
   font-weight: 600;
 }
+
+/* ==========================================================================
+   Dynamic Ingestion & Sync Terminal Styles
+   ========================================================================== */
+.sync-progress-bar-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+  margin: 12px 0;
+}
+
+.sync-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #10b981);
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+.sync-terminal {
+  background: #090d16;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  max-height: 220px;
+  overflow-y: auto;
+  color: #94a3b8;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sync-terminal-line {
+  line-height: 1.4;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.sync-terminal-line.success { color: #34d399; }
+.sync-terminal-line.info { color: #60a5fa; }
+.sync-terminal-line.warning { color: #fbbf24; }
+.sync-terminal-line.highlight { color: #c084fc; font-weight: 600; }
+
 

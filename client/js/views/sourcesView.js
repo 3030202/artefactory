@@ -7,7 +7,8 @@ export const sourcesView = {
     categoryFilter: 'all',
     searchQuery: '',
     viewMode: 'dense', // 'dense' | 'cards'
-    selectedSource: null
+    selectedSource: null,
+    isSyncing: false
   },
 
   async render(container) {
@@ -24,13 +25,17 @@ export const sourcesView = {
           </div>
         </div>
         <div class="flex-center gap-sm">
+          <button class="btn btn-primary" id="btn-trigger-sync" style="background: linear-gradient(135deg, #3b82f6, #8b5cf6); border: none; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);" title="Динамический сбор и синхронизация артефактов">
+            <i data-lucide="refresh-cw" id="sync-btn-icon"></i>
+            <span>Live Sync from Sources</span>
+          </button>
           <a href="/api/sources/export/active.md" target="_blank" class="btn btn-secondary" title="Export Markdown Registry">
-            <i data-lucide="file-text"></i> export active.md
+            <i data-lucide="file-text"></i> active.md
           </a>
           <a href="/api/sources/export/all.json" target="_blank" class="btn btn-secondary" title="Export Full JSON Database">
             <i data-lucide="download"></i> all.json
           </a>
-          <button class="btn btn-primary" id="btn-toggle-view">
+          <button class="btn btn-secondary" id="btn-toggle-view">
             <i data-lucide="layout-grid" id="view-icon"></i>
             <span id="view-mode-text">Cards View</span>
           </button>
@@ -155,6 +160,7 @@ export const sourcesView = {
                 <td>
                   <span class="font-mono text-xs text-secondary">${s.id}</span>
                   <div class="badge badge-version" style="font-size: 10px; margin-top: 2px;">${s.year || '2025-2026'}</div>
+                  ${s.last_synced_at ? `<div class="badge badge-success" style="font-size: 9px; margin-top: 2px;">Synced</div>` : ''}
                 </td>
                 <td>
                   <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 2px;">${s.title}</div>
@@ -182,6 +188,9 @@ export const sourcesView = {
                     <a href="${s.url}" target="_blank" class="btn btn-icon btn-secondary" title="Открыть внешний источник">
                       <i data-lucide="external-link"></i>
                     </a>
+                    <button class="btn btn-secondary btn-sm btn-sync-single-source" data-id="${s.id}" title="Синхронизировать этот источник">
+                      <i data-lucide="refresh-cw"></i>
+                    </button>
                     <button class="btn btn-secondary btn-sm btn-inspect-source" data-id="${s.id}" title="Просмотр деталей">
                       <i data-lucide="eye"></i>
                     </button>
@@ -206,7 +215,10 @@ export const sourcesView = {
             <div>
               <div class="card-header" style="align-items: flex-start;">
                 <div>
-                  <span class="badge badge-sources" style="margin-bottom: 6px;">${s.categoryLabel || s.category}</span>
+                  <div class="flex-center gap-xs" style="margin-bottom: 6px;">
+                    <span class="badge badge-sources">${s.categoryLabel || s.category}</span>
+                    ${s.last_synced_at ? `<span class="badge badge-success" style="font-size: 9px;">Synced</span>` : ''}
+                  </div>
                   <h3 class="card-title" style="font-size: 15px; line-height: 1.3;">${s.title}</h3>
                   <div class="text-xs text-tertiary" style="margin-top: 2px;">Автор: ${s.author || 'Open Source'} • ${s.year || '2025-2026'}</div>
                 </div>
@@ -230,6 +242,9 @@ export const sourcesView = {
                 <a href="${s.url}" target="_blank" class="btn btn-icon btn-secondary" title="Открыть внешний источник">
                   <i data-lucide="external-link"></i>
                 </a>
+                <button class="btn btn-secondary btn-sm btn-sync-single-source" data-id="${s.id}" title="Синхронизировать">
+                  <i data-lucide="refresh-cw"></i>
+                </button>
                 <button class="btn btn-secondary btn-sm btn-inspect-source" data-id="${s.id}">
                   Инфо
                 </button>
@@ -269,6 +284,12 @@ export const sourcesView = {
       this.renderContent(container);
     });
 
+    // Dynamic Live Sync Trigger button
+    const syncBtn = container.querySelector('#btn-trigger-sync');
+    syncBtn.addEventListener('click', () => {
+      this.openSyncModal(container);
+    });
+
     // Category chips
     const chipBtns = container.querySelectorAll('.chip-btn');
     chipBtns.forEach(btn => {
@@ -280,7 +301,7 @@ export const sourcesView = {
       });
     });
 
-    // Delegate click events for inspect & convert buttons
+    // Delegate click events for inspect, convert & single sync buttons
     container.addEventListener('click', async (e) => {
       const inspectBtn = e.target.closest('.btn-inspect-source');
       if (inspectBtn) {
@@ -295,7 +316,138 @@ export const sourcesView = {
         this.openConvertModal(id);
         return;
       }
+
+      const syncSingleBtn = e.target.closest('.btn-sync-single-source');
+      if (syncSingleBtn) {
+        const id = syncSingleBtn.getAttribute('data-id');
+        await this.syncSingleSource(id, container);
+        return;
+      }
     });
+  },
+
+  async syncSingleSource(id, container) {
+    try {
+      Toast.info(`Синхронизация источника ${id}...`);
+      const res = await api.syncSource(id);
+      Toast.success(`Источник успешно синхронизирован! Новых: +${res.result.created.prompts + res.result.created.skills + res.result.created.workflows + res.result.created.mcp_servers + res.result.created.rules}`);
+      await this.loadSources(container);
+      if (window.appRouter) window.appRouter.updateStatsCounters();
+    } catch (err) {
+      Toast.error(err.message || 'Ошибка синхронизации источника');
+    }
+  },
+
+  // Open Full Dynamic Ingestion Progress Dialog
+  openSyncModal(pageContainer) {
+    const modalRoot = document.getElementById('sources-modal-container');
+    modalRoot.innerHTML = `
+      <div class="modal-backdrop" id="sync-modal-backdrop">
+        <div class="modal modal-lg">
+          <div class="modal-header">
+            <div class="flex-center gap-sm">
+              <i data-lucide="refresh-cw" class="spin-animation" style="color: var(--theme-color);"></i>
+              <h3 class="modal-title">Dynamic Ingestion & Harvesting Engine</h3>
+            </div>
+            <button class="modal-close" id="btn-sync-close"><i data-lucide="x"></i></button>
+          </div>
+          <div class="modal-body" style="display: flex; flex-direction: column; gap: 14px;">
+            <p class="text-sm text-secondary">
+              Запуск динамического сбора спецификаций, промпт-шаблонов, графов LangGraph, MCP-серверов и гардрайлов безопасности из канонических источников.
+            </p>
+
+            <div class="sync-progress-bar-track">
+              <div class="sync-progress-bar-fill" id="sync-progress-fill"></div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;">
+              <div style="background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); padding: 8px; border-radius: 6px; text-align: center;">
+                <div class="text-xs text-secondary">🟣 Prompts</div>
+                <div id="stat-sync-prompts" style="font-weight: 700; font-size: 16px; color: #c084fc;">+0</div>
+              </div>
+              <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); padding: 8px; border-radius: 6px; text-align: center;">
+                <div class="text-xs text-secondary">🟢 Skills</div>
+                <div id="stat-sync-skills" style="font-weight: 700; font-size: 16px; color: #34d399;">+0</div>
+              </div>
+              <div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); padding: 8px; border-radius: 6px; text-align: center;">
+                <div class="text-xs text-secondary">🟡 Workflows</div>
+                <div id="stat-sync-workflows" style="font-weight: 700; font-size: 16px; color: #fbbf24;">+0</div>
+              </div>
+              <div style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); padding: 8px; border-radius: 6px; text-align: center;">
+                <div class="text-xs text-secondary">🌐 MCP Servers</div>
+                <div id="stat-sync-mcp" style="font-weight: 700; font-size: 16px; color: #22d3ee;">+0</div>
+              </div>
+              <div style="background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.3); padding: 8px; border-radius: 6px; text-align: center;">
+                <div class="text-xs text-secondary">🔴 Rules</div>
+                <div id="stat-sync-rules" style="font-weight: 700; font-size: 16px; color: #fb7185;">+0</div>
+              </div>
+            </div>
+
+            <div class="sync-terminal" id="sync-terminal-output">
+              <div class="sync-terminal-line info">[INIT] Engine ready. Starting live discovery...</div>
+            </div>
+          </div>
+          <div class="modal-footer flex-center" style="justify-content: space-between;">
+            <span class="text-xs text-tertiary font-mono" id="sync-status-msg">Выполняется синхронизация...</span>
+            <button class="btn btn-primary" id="btn-sync-done" disabled>
+              Завершить
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    if (window.lucide) window.lucide.createIcons();
+
+    const closeModal = () => { modalRoot.innerHTML = ''; };
+    modalRoot.querySelector('#btn-sync-close').addEventListener('click', closeModal);
+    modalRoot.querySelector('#btn-sync-done').addEventListener('click', () => {
+      closeModal();
+      this.loadSources(pageContainer);
+      if (window.appRouter) window.appRouter.updateStatsCounters();
+    });
+
+    const terminal = modalRoot.querySelector('#sync-terminal-output');
+    const progressFill = modalRoot.querySelector('#sync-progress-fill');
+    const doneBtn = modalRoot.querySelector('#btn-sync-done');
+    const statusMsg = modalRoot.querySelector('#sync-status-msg');
+
+    // Run dynamic sync
+    setTimeout(async () => {
+      try {
+        progressFill.style.width = '30%';
+        const res = await api.syncSources();
+        const report = res.report || {};
+        const logs = report.logs || [];
+        const totals = report.totals || {};
+
+        progressFill.style.width = '80%';
+        terminal.innerHTML = logs.map(l => {
+          let cls = 'info';
+          if (l.includes('[OK]') || l.includes('✅')) cls = 'success';
+          if (l.includes('[WARN]')) cls = 'warning';
+          return `<div class="sync-terminal-line ${cls}">${l}</div>`;
+        }).join('');
+        terminal.scrollTop = terminal.scrollHeight;
+
+        modalRoot.querySelector('#stat-sync-prompts').textContent = `+${totals.prompts_created || 0}`;
+        modalRoot.querySelector('#stat-sync-skills').textContent = `+${totals.skills_created || 0}`;
+        modalRoot.querySelector('#stat-sync-workflows').textContent = `+${totals.workflows_created || 0}`;
+        modalRoot.querySelector('#stat-sync-mcp').textContent = `+${totals.mcp_created || 0}`;
+        modalRoot.querySelector('#stat-sync-rules').textContent = `+${totals.rules_created || 0}`;
+
+        progressFill.style.width = '100%';
+        statusMsg.textContent = `Синхронизация завершена за ${totals.duration_ms || 0}ms!`;
+        doneBtn.removeAttribute('disabled');
+        doneBtn.classList.add('btn-success');
+        Toast.success('Динамический сбор артефактов успешно завершен!');
+      } catch (err) {
+        progressFill.style.background = 'var(--status-danger)';
+        terminal.innerHTML += `<div class="sync-terminal-line warning">[ERROR] ${err.message}</div>`;
+        statusMsg.textContent = 'Ошибка синхронизации';
+        doneBtn.removeAttribute('disabled');
+      }
+    }, 400);
   },
 
   openInspectModal(id) {
@@ -319,6 +471,7 @@ export const sourcesView = {
               <span class="badge badge-version">${source.year || '2025-2026'}</span>
               <span class="badge badge-version">Лицензия: ${source.license}</span>
               <span class="badge badge-version">Оценка токенов: ~${source.tokens_est}</span>
+              ${source.last_synced_at ? `<span class="badge badge-success">Last Synced: ${new Date(source.last_synced_at).toLocaleTimeString()}</span>` : ''}
             </div>
 
             <div>
@@ -441,7 +594,6 @@ export const sourcesView = {
         const res = await api.convertSource(source.id, targetType);
         Toast.success(res.message || 'Артефакт успешно создан!');
         closeModal();
-        // Redirect to target category hash
         if (targetType === 'mcp_servers') window.location.hash = '#mcp';
         else window.location.hash = `#${targetType}`;
       } catch (err) {

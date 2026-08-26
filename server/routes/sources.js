@@ -1,7 +1,32 @@
 import express from 'express';
 import { db } from '../db.js';
+import { ingestionEngine } from '../ingestion_engine.js';
 
 const router = express.Router();
+
+// Dynamic Harvesting / Sync Endpoints
+router.post('/sync', async (req, res) => {
+  try {
+    const report = await ingestionEngine.syncAll(req.body);
+    res.json({ success: true, report });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.get('/sync/status', (req, res) => {
+  res.json({ success: true, status: ingestionEngine.syncStats });
+});
+
+router.post('/:id/sync', async (req, res) => {
+  try {
+    const result = await ingestionEngine.syncSource(req.params.id);
+    res.json({ success: true, result });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 
 // Get all sources
 router.get('/', (req, res) => {
