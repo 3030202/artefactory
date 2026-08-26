@@ -1,0 +1,14 @@
+{
+    auto_https disable_redirects
+}
+
+# HTTP endpoints
+http://00.0x101.lol, http://0x101.lol, http://8.0x101.lol, http://www.0x101.lol, :80 {
+    reverse_proxy control-tower:4000
+}
+
+# HTTPS endpoints
+https://00.0x101.lol, https://0x101.lol, https://8.0x101.lol, https://www.0x101.lol {
+    tls internal
+    reverse_proxy control-tower:4000
+}
