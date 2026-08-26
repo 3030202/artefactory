@@ -2,7 +2,10 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#090d16">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Prompt Ops Control Tower — artefactory</title>
   <meta name="description" content="Управление, поиск и ведение реестров артефактов ИИ: Промпты, Скиллы, Воркфлоу DAG, MCP-серверы и Правила">
   <link rel="stylesheet" href="css/main.css">
@@ -13,9 +16,12 @@
   <!-- Ambient background gradients -->
   <div class="ambient-bg"></div>
 
+  <!-- Mobile Drawer Backdrop Overlay -->
+  <div class="mobile-drawer-backdrop" id="mobile-drawer-backdrop"></div>
+
   <div id="app-root" data-theme="dashboard">
-    <!-- Left Navigation Sidebar -->
-    <aside class="sidebar">
+    <!-- Left Navigation Sidebar (Desktop + Mobile Slide-out Drawer) -->
+    <aside class="sidebar" id="main-sidebar">
       <!-- Brand Logo -->
       <div class="brand" id="brand-btn" title="Return to Dashboard">
         <div class="brand-icon">⬡</div>
@@ -94,8 +100,8 @@
 
     <!-- Main Content Area -->
     <main class="main-wrapper">
-      <!-- Top Header -->
-      <header class="top-header">
+      <!-- Desktop Top Header -->
+      <header class="top-header desktop-only-header">
         <!-- Global Omni-Search Trigger Button -->
         <button class="header-search-btn" id="header-search-btn" title="Global Artifact Search (Ctrl+K)">
           <span>🔍</span>
@@ -111,11 +117,57 @@
         </div>
       </header>
 
+      <!-- Mobile Top Header Bar -->
+      <header class="mobile-header-bar">
+        <button class="mobile-header-btn" id="btn-toggle-mobile-menu" aria-label="Open Navigation Menu">
+          <span style="font-size: 20px;">☰</span>
+        </button>
+        <div class="mobile-brand-title" id="mobile-brand-btn">
+          <span style="color: var(--theme-color, #6366f1); font-size: 18px;">⬡</span>
+          <span>Control Tower</span>
+        </div>
+        <button class="mobile-header-btn" id="mobile-header-search-btn" aria-label="Global Search">
+          <span style="font-size: 18px;">🔍</span>
+        </button>
+      </header>
+
       <!-- Scrollable Dynamic Page Content -->
       <section class="page-container" id="page-content">
         <!-- Views rendered here by AppRouter -->
       </section>
     </main>
+
+    <!-- Mobile Floating Glass Bottom Navigation Dock -->
+    <nav class="mobile-bottom-dock" id="mobile-bottom-dock" aria-label="Mobile Dock Navigation">
+      <div class="dock-item active" data-route="dashboard">
+        <span class="dock-icon">🎛️</span>
+        <span class="dock-label">Dash</span>
+      </div>
+      <div class="dock-item" data-route="sources">
+        <span class="dock-icon">📚</span>
+        <span class="dock-label">Sources</span>
+      </div>
+      <div class="dock-item" data-route="prompts">
+        <span class="dock-icon">🟣</span>
+        <span class="dock-label">Prompts</span>
+      </div>
+      <div class="dock-item" data-route="skills">
+        <span class="dock-icon">🟢</span>
+        <span class="dock-label">Skills</span>
+      </div>
+      <div class="dock-item" data-route="workflows">
+        <span class="dock-icon">🟡</span>
+        <span class="dock-label">DAG</span>
+      </div>
+      <div class="dock-item" data-route="mcp">
+        <span class="dock-icon">🌐</span>
+        <span class="dock-label">MCP</span>
+      </div>
+      <div class="dock-item" data-route="rules">
+        <span class="dock-icon">🔴</span>
+        <span class="dock-label">Rules</span>
+      </div>
+    </nav>
   </div>
 
   <!-- Toast Notification Container -->

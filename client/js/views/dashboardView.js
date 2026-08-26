@@ -41,7 +41,7 @@ export const dashboardView = {
         </div>
 
         <!-- 6 Category Metrics Cards -->
-        <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-bottom: 28px;">
+        <div class="dashboard-metrics-grid">
           <!-- 0. Sources & Specs -->
           <div class="artifact-card" style="border-top: 3px solid var(--cat-sources, #3b82f6); cursor: pointer;" onclick="window.appRouter.navigate('sources')">
             <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -104,7 +104,7 @@ export const dashboardView = {
         </div>
 
         <!-- Middle Section: Lifecycle Roadmap & Subagents Pool -->
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 28px;">
+        <div class="dashboard-middle-grid">
           <!-- Lifecycle Roadmap Card -->
           <div class="artifact-card">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">

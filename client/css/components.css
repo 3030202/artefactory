@@ -668,4 +668,126 @@
 .sync-terminal-line.warning { color: #fbbf24; }
 .sync-terminal-line.highlight { color: #c084fc; font-weight: 600; }
 
+/* ==========================================================================
+   Mobile Bottom Sheets & Responsive Touch Optimizations
+   ========================================================================== */
+.modal-drag-handle {
+  display: none;
+  width: 44px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius-pill);
+  margin: 8px auto 4px;
+  cursor: grab;
+}
+
+@media (max-width: 768px) {
+  .modal-drag-handle {
+    display: block;
+  }
+
+  /* Transform Centered Modals into Native Bottom Sheets */
+  .modal-backdrop,
+  .omni-backdrop {
+    padding: 0 !important;
+    align-items: flex-end !important;
+  }
+
+  .modal-window,
+  .modal,
+  .omni-dialog {
+    max-width: 100% !important;
+    width: 100% !important;
+    max-height: 88vh !important;
+    border-radius: 20px 20px 0 0 !important;
+    border-bottom: none !important;
+    transform: translateY(100%) !important;
+    margin: 0 !important;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8) !important;
+    transition: transform var(--transition-smooth) !important;
+  }
+
+  .modal-backdrop.open .modal-window,
+  .modal-backdrop.open .modal,
+  .omni-backdrop .omni-dialog,
+  .modal-backdrop .modal {
+    transform: translateY(0) !important;
+  }
+
+  .modal-header {
+    padding: 14px 18px !important;
+  }
+
+  .modal-body {
+    padding: 16px 18px !important;
+    gap: 14px !important;
+  }
+
+  .modal-footer {
+    padding: 14px 18px !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  /* Stack Split Pane Editors Vertically */
+  .split-pane {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Single Column Card Grids on Mobile */
+  .cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Forms & Touch Targets */
+  .form-control,
+  .form-input,
+  .form-select,
+  .form-textarea {
+    font-size: 16px !important; /* Prevents auto-zoom on iOS Safari */
+    min-height: 42px !important;
+  }
+
+  .btn {
+    min-height: 40px !important;
+  }
+
+  /* DAG Canvas Mobile Adaptation */
+  .dag-wrapper {
+    height: 320px !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .dag-canvas {
+    min-width: 600px !important;
+  }
+
+  /* Dense Table Horizontal Swipe */
+  .dense-table-wrapper {
+    margin: 0 -14px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+
+  /* Tag & Filter Chips Horizontal Swipe */
+  .tag-chips-container,
+  .omni-filter-chips {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    padding-bottom: 6px !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .tag-chips-container::-webkit-scrollbar,
+  .omni-filter-chips::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+
 

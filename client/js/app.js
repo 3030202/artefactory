@@ -21,26 +21,52 @@ class AppRouter {
     };
     this.currentRoute = 'dashboard';
     this.container = document.getElementById('page-content');
+    this.sidebar = document.getElementById('main-sidebar');
+    this.drawerBackdrop = document.getElementById('mobile-drawer-backdrop');
     this.init();
   }
 
   init() {
-    // Navigation items click
+    // Desktop & Drawer Navigation items click
     document.querySelectorAll('.nav-item[data-route]').forEach(item => {
+      item.addEventListener('click', () => {
+        const route = item.getAttribute('data-route');
+        this.navigate(route);
+        this.closeMobileDrawer();
+      });
+    });
+
+    // Mobile Bottom Dock items click
+    document.querySelectorAll('.dock-item[data-route]').forEach(item => {
       item.addEventListener('click', () => {
         const route = item.getAttribute('data-route');
         this.navigate(route);
       });
     });
 
+    // Mobile Hamburger Toggle
+    document.getElementById('btn-toggle-mobile-menu')?.addEventListener('click', () => {
+      this.toggleMobileDrawer();
+    });
+
+    // Mobile Drawer Backdrop click
+    this.drawerBackdrop?.addEventListener('click', () => {
+      this.closeMobileDrawer();
+    });
+
     // Brand click -> dashboard
     document.getElementById('brand-btn')?.addEventListener('click', () => {
       this.navigate('dashboard');
+      this.closeMobileDrawer();
     });
 
-    // Global Omni-Search Modal handlers
-    const searchBtn = document.getElementById('header-search-btn');
-    searchBtn?.addEventListener('click', () => this.openOmniSearch());
+    document.getElementById('mobile-brand-btn')?.addEventListener('click', () => {
+      this.navigate('dashboard');
+    });
+
+    // Global Omni-Search Modal handlers (Desktop & Mobile)
+    document.getElementById('header-search-btn')?.addEventListener('click', () => this.openOmniSearch());
+    document.getElementById('mobile-header-search-btn')?.addEventListener('click', () => this.openOmniSearch());
 
     window.addEventListener('keydown', (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
@@ -53,6 +79,24 @@ class AppRouter {
     const initial = window.location.hash.replace('#', '') || 'dashboard';
     this.navigate(initial);
     this.updateStatsCounters();
+  }
+
+  toggleMobileDrawer() {
+    if (this.sidebar?.classList.contains('open')) {
+      this.closeMobileDrawer();
+    } else {
+      this.openMobileDrawer();
+    }
+  }
+
+  openMobileDrawer() {
+    this.sidebar?.classList.add('open');
+    this.drawerBackdrop?.classList.add('open');
+  }
+
+  closeMobileDrawer() {
+    this.sidebar?.classList.remove('open');
+    this.drawerBackdrop?.classList.remove('open');
   }
 
   async updateStatsCounters() {
@@ -79,8 +123,17 @@ class AppRouter {
     this.currentRoute = route;
     window.location.hash = route;
 
-    // Update active nav class
+    // Update active nav class in desktop sidebar
     document.querySelectorAll('.nav-item').forEach(item => {
+      if (item.getAttribute('data-route') === route) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+
+    // Update active dock item in mobile floating dock
+    document.querySelectorAll('.dock-item').forEach(item => {
       if (item.getAttribute('data-route') === route) {
         item.classList.add('active');
       } else {
@@ -114,9 +167,10 @@ class AppRouter {
     backdrop.id = 'omni-modal';
     backdrop.innerHTML = `
       <div class="omni-dialog">
+        <div class="modal-drag-handle"></div>
         <div class="omni-input-bar">
-          <i data-lucide="search" style="color: var(--theme-color, #6366f1); width: 20px; height: 20px;"></i>
-          <input type="text" class="omni-search-input" id="omni-query" placeholder="Глобальный поиск по реестрам, источникам, промптам (Ctrl+K)..." autofocus>
+          <span style="font-size: 18px;">🔍</span>
+          <input type="text" class="omni-search-input" id="omni-query" placeholder="Глобальный поиск (Ctrl+K)..." autofocus>
           <span class="omni-kbd">ESC</span>
         </div>
         <div class="omni-filter-chips">
@@ -135,7 +189,6 @@ class AppRouter {
     `;
 
     document.body.appendChild(backdrop);
-    if (window.lucide) window.lucide.createIcons();
 
     const input = backdrop.querySelector('#omni-query');
     const resultsContainer = backdrop.querySelector('#omni-results');
