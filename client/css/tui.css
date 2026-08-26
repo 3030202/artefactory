@@ -1,0 +1,349 @@
+/* ==========================================================================
+   Ultra-Dense Terminal UI (TUI) Mode — In the Spirit of 8.0x101.lol
+   ========================================================================== */
+
+/* 1. Terminal Color Themes */
+#tui-root[data-tui-theme="amber"] {
+  --tui-bg: #0c0802;
+  --tui-panel-bg: #140d04;
+  --tui-border: #78350f;
+  --tui-fg: #f59e0b;
+  --tui-fg-dim: #92400e;
+  --tui-fg-bright: #fef3c7;
+  --tui-highlight-bg: #451a03;
+  --tui-accent: #fbbf24;
+  --tui-success: #10b981;
+  --tui-danger: #ef4444;
+}
+
+#tui-root[data-tui-theme="green"] {
+  --tui-bg: #030d06;
+  --tui-panel-bg: #06170b;
+  --tui-border: #065f46;
+  --tui-fg: #22c55e;
+  --tui-fg-dim: #15803d;
+  --tui-fg-bright: #dcfce7;
+  --tui-highlight-bg: #064e3b;
+  --tui-accent: #34d399;
+  --tui-success: #22c55e;
+  --tui-danger: #ef4444;
+}
+
+#tui-root[data-tui-theme="cyan"] {
+  --tui-bg: #020c12;
+  --tui-panel-bg: #051824;
+  --tui-border: #155e75;
+  --tui-fg: #06b6d4;
+  --tui-fg-dim: #0e7490;
+  --tui-fg-bright: #cffafe;
+  --tui-highlight-bg: #164e63;
+  --tui-accent: #22d3ee;
+  --tui-success: #10b981;
+  --tui-danger: #ef4444;
+}
+
+#tui-root[data-tui-theme="magenta"] {
+  --tui-bg: #0f030a;
+  --tui-panel-bg: #1c0614;
+  --tui-border: #831843;
+  --tui-fg: #ec4899;
+  --tui-fg-dim: #9d174d;
+  --tui-fg-bright: #fce7f3;
+  --tui-highlight-bg: #500724;
+  --tui-accent: #f472b6;
+  --tui-success: #10b981;
+  --tui-danger: #ef4444;
+}
+
+#tui-root[data-tui-theme="mono"] {
+  --tui-bg: #090a0f;
+  --tui-panel-bg: #12141c;
+  --tui-border: #334155;
+  --tui-fg: #cbd5e1;
+  --tui-fg-dim: #64748b;
+  --tui-fg-bright: #ffffff;
+  --tui-highlight-bg: #1e293b;
+  --tui-accent: #93c5fd;
+  --tui-success: #34d399;
+  --tui-danger: #f87171;
+}
+
+/* 2. Fullscreen TUI Screen Container */
+#tui-root {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 99999;
+  background-color: var(--tui-bg);
+  color: var(--tui-fg);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 12px;
+  line-height: 1.35;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 4px 6px;
+  user-select: none;
+}
+
+#tui-root.active {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scanlines overlay effect */
+#tui-root::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 3px;
+  z-index: 100000;
+  pointer-events: none;
+  opacity: 0.35;
+}
+
+/* 3. Top Navigation Bar */
+.tui-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--tui-border);
+  padding: 3px 6px;
+  background: var(--tui-panel-bg);
+  font-weight: 700;
+}
+
+.tui-tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+}
+
+.tui-tab {
+  padding: 2px 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  color: var(--tui-fg-dim);
+}
+
+.tui-tab:hover {
+  color: var(--tui-fg-bright);
+}
+
+.tui-tab.active {
+  color: var(--tui-fg-bright);
+  background: var(--tui-highlight-bg);
+  border-color: var(--tui-border);
+}
+
+.tui-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tui-btn-action {
+  cursor: pointer;
+  padding: 1px 6px;
+  border: 1px solid var(--tui-border);
+  background: var(--tui-bg);
+  color: var(--tui-fg);
+}
+
+.tui-btn-action:hover {
+  background: var(--tui-highlight-bg);
+  color: var(--tui-fg-bright);
+}
+
+/* 4. Dual Pane Split Layout */
+.tui-main-split {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  margin: 4px 0;
+  gap: 4px;
+}
+
+/* Left Pane: Registry Index List */
+.tui-left-pane {
+  flex: 0 0 42%;
+  border: 1px solid var(--tui-border);
+  background: var(--tui-panel-bg);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.tui-pane-header {
+  padding: 3px 6px;
+  border-bottom: 1px solid var(--tui-border);
+  background: var(--tui-bg);
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+}
+
+.tui-items-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2px 0;
+}
+
+.tui-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 6px;
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  white-space: nowrap;
+}
+
+.tui-item-row:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tui-item-row.selected {
+  background: var(--tui-highlight-bg);
+  color: var(--tui-fg-bright);
+  border-left-color: var(--tui-accent);
+}
+
+.tui-item-cursor {
+  margin-right: 4px;
+  font-weight: 800;
+}
+
+.tui-item-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 6px;
+}
+
+.tui-item-meta {
+  color: var(--tui-fg-dim);
+  font-size: 11px;
+}
+
+/* Right Pane: Artifact Detail & Inspector */
+.tui-right-pane {
+  flex: 1;
+  border: 1px solid var(--tui-border);
+  background: var(--tui-panel-bg);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.tui-detail-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 10px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--tui-fg-bright);
+}
+
+/* 5. Bottom Status Bar & Command Prompt */
+.tui-bottom-bar {
+  border: 1px solid var(--tui-border);
+  background: var(--tui-panel-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.tui-status-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 6px;
+  font-size: 11px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.tui-mode-badge {
+  background: var(--tui-highlight-bg);
+  color: var(--tui-accent);
+  padding: 1px 5px;
+  font-weight: 700;
+}
+
+.tui-key-hints {
+  color: var(--tui-fg-dim);
+}
+
+.tui-key-hints span {
+  color: var(--tui-fg);
+  font-weight: 700;
+}
+
+.tui-command-line {
+  display: flex;
+  align-items: center;
+  padding: 3px 6px;
+  background: var(--tui-bg);
+}
+
+.tui-cmd-prefix {
+  font-weight: 800;
+  margin-right: 4px;
+  color: var(--tui-accent);
+}
+
+.tui-cmd-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 12px;
+  color: var(--tui-fg-bright);
+}
+
+/* 6. Quick Help Overlay Modal */
+.tui-help-modal {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 620px;
+  max-width: 90vw;
+  background: var(--tui-bg);
+  border: 2px solid var(--tui-border);
+  padding: 12px 16px;
+  z-index: 100010;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+}
+
+.tui-help-modal.open {
+  display: block;
+}
+
+/* Toggle Button in Header */
+.btn-toggle-tui {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition-fast);
+}
+
+.btn-toggle-tui:hover {
+  background: rgba(245, 158, 11, 0.25);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+}

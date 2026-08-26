@@ -8,6 +8,7 @@ import { workflowsView } from './views/workflowsView.js';
 import { mcpView } from './views/mcpView.js';
 import { rulesView } from './views/rulesView.js';
 import { gitopsView } from './views/gitopsView.js';
+import { tuiEngine } from './tui/tui_engine.js';
 
 class AppRouter {
   constructor() {
@@ -66,6 +67,14 @@ class AppRouter {
       this.navigate('dashboard');
     });
 
+    // TUI Mode Toggle buttons
+    document.getElementById('btn-toggle-tui-desktop')?.addEventListener('click', () => {
+      tuiEngine.toggle();
+    });
+    document.getElementById('btn-toggle-tui-mobile')?.addEventListener('click', () => {
+      tuiEngine.toggle();
+    });
+
     // Global Omni-Search Modal handlers (Desktop & Mobile)
     document.getElementById('header-search-btn')?.addEventListener('click', () => this.openOmniSearch());
     document.getElementById('mobile-header-search-btn')?.addEventListener('click', () => this.openOmniSearch());
@@ -81,6 +90,11 @@ class AppRouter {
     const initial = window.location.hash.replace('#', '') || 'dashboard';
     this.navigate(initial);
     this.updateStatsCounters();
+
+    // Check if user preferred TUI mode
+    if (localStorage.getItem('artefactory_view_mode') === 'tui') {
+      tuiEngine.activate();
+    }
   }
 
   toggleMobileDrawer() {

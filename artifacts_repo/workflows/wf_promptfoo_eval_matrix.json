@@ -88,23 +88,23 @@
     }
   ],
   "created_at": "2026-08-24T14:00:00Z",
-  "updated_at": "2026-08-26T12:46:24.646Z",
+  "updated_at": "2026-08-26T13:02:48.221Z",
   "source_title": "Promptfoo: LLM Evaluation, Red Teaming & CI/CD Security Matrix",
   "source_url": "https://www.promptfoo.dev/docs",
   "auto_synced": true,
   "upstream_feed": true,
   "in_tokens_est": 154,
   "out_tokens_est": 250,
-  "last_synced_at": "2026-08-26T12:46:24.646Z",
+  "last_synced_at": "2026-08-26T13:02:48.221Z",
   "history": [
     {
       "version": "2.4.0",
-      "timestamp": "2026-08-26T12:46:24.646Z",
+      "timestamp": "2026-08-26T13:02:48.221Z",
       "note": "Update"
     },
     {
       "version": "2.4.0",
-      "timestamp": "2026-08-26T12:46:22.891Z",
+      "timestamp": "2026-08-26T13:02:46.298Z",
       "note": "Update"
     }
   ]

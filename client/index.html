@@ -11,6 +11,7 @@
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/themes.css">
   <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/tui.css">
 </head>
 <body data-theme="dashboard">
   <!-- Ambient background gradients -->
@@ -115,10 +116,11 @@
         </button>
 
         <div class="header-actions">
-          <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary); margin-right: 8px;">
-            <span>Phase:</span>
-            <span class="badge badge-success">Phase 2 / Phase 3</span>
-          </div>
+          <button class="btn-toggle-tui" id="btn-toggle-tui-desktop" title="Переключить на Ultra-Dense Terminal UI (Alt+T)">
+            <span>📟</span>
+            <span>Dense TUI</span>
+            <span class="shortcut-badge" style="background: rgba(0,0,0,0.3); color: #fbbf24; border-color: rgba(245,158,11,0.3);">Alt+T</span>
+          </button>
         </div>
       </header>
 
@@ -131,9 +133,14 @@
           <span style="color: var(--theme-color, #6366f1); font-size: 18px;">⬡</span>
           <span>Control Tower</span>
         </div>
-        <button class="mobile-header-btn" id="mobile-header-search-btn" aria-label="Global Search">
-          <span style="font-size: 18px;">🔍</span>
-        </button>
+        <div style="display: flex; align-items: center; gap: 4px;">
+          <button class="mobile-header-btn" id="btn-toggle-tui-mobile" aria-label="Toggle Dense TUI Mode" title="Dense TUI (8.0x101)">
+            <span style="font-size: 16px;">📟</span>
+          </button>
+          <button class="mobile-header-btn" id="mobile-header-search-btn" aria-label="Global Search">
+            <span style="font-size: 18px;">🔍</span>
+          </button>
+        </div>
       </header>
 
       <!-- Scrollable Dynamic Page Content -->
