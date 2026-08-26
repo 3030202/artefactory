@@ -10,6 +10,7 @@ import mcpRouter from './routes/mcp.js';
 import rulesRouter from './routes/rules.js';
 import searchRouter from './routes/search.js';
 import systemRouter from './routes/system.js';
+import sourcesRouter from './routes/sources.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -40,6 +41,7 @@ app.use('/api/skills', skillsRouter);
 app.use('/api/workflows', workflowsRouter);
 app.use('/api/mcp', mcpRouter);
 app.use('/api/rules', rulesRouter);
+app.use('/api/sources', sourcesRouter);
 app.use('/api/search', searchRouter);
 app.use('/api/system', systemRouter);
 

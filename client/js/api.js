@@ -94,5 +94,17 @@ export const api = {
   createRule(data) { return this.request('/rules', { method: 'POST', body: JSON.stringify(data) }); },
   updateRule(id, data) { return this.request(`/rules/${id}`, { method: 'PUT', body: JSON.stringify(data) }); },
   deleteRule(id) { return this.request(`/rules/${id}`, { method: 'DELETE' }); },
-  compileRules() { return this.request('/rules/compile/system-prompt'); }
+  compileRules() { return this.request('/rules/compile/system-prompt'); },
+
+  // Sources & Knowledge Hub
+  getSources(params = {}) {
+    const q = new URLSearchParams(params).toString();
+    return this.request(`/sources?${q}`);
+  },
+  getSource(id) { return this.request(`/sources/${id}`); },
+  createSource(data) { return this.request('/sources', { method: 'POST', body: JSON.stringify(data) }); },
+  updateSource(id, data) { return this.request(`/sources/${id}`, { method: 'PUT', body: JSON.stringify(data) }); },
+  deleteSource(id) { return this.request(`/sources/${id}`, { method: 'DELETE' }); },
+  convertSource(id, targetType) { return this.request(`/sources/${id}/convert`, { method: 'POST', body: JSON.stringify({ targetType }) }); }
 };
+

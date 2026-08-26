@@ -1,6 +1,7 @@
 import { api } from './api.js';
 import { Toast } from './components/toast.js';
 import { dashboardView } from './views/dashboardView.js';
+import { sourcesView } from './views/sourcesView.js';
 import { promptsView } from './views/promptsView.js';
 import { skillsView } from './views/skillsView.js';
 import { workflowsView } from './views/workflowsView.js';
@@ -11,6 +12,7 @@ class AppRouter {
   constructor() {
     this.routes = {
       dashboard: dashboardView,
+      sources: sourcesView,
       prompts: promptsView,
       skills: skillsView,
       workflows: workflowsView,
@@ -61,6 +63,7 @@ class AppRouter {
         const el = document.getElementById(id);
         if (el) el.textContent = val || 0;
       };
+      setCnt('cnt-sources', stats.sources_count);
       setCnt('cnt-prompts', stats.prompts_count);
       setCnt('cnt-skills', stats.skills_count);
       setCnt('cnt-workflows', stats.workflows_count);
@@ -101,40 +104,40 @@ class AppRouter {
     this.navigate(this.currentRoute);
   }
 
-  // Omni-Search Floating Modal
+  // Ctrl+K Omni-Search Modal
   openOmniSearch() {
-    const existing = document.querySelector('.omni-modal-backdrop');
+    const existing = document.getElementById('omni-modal');
     if (existing) existing.remove();
 
     const backdrop = document.createElement('div');
-    backdrop.className = 'modal-backdrop omni-modal-backdrop open';
-
+    backdrop.className = 'omni-backdrop';
+    backdrop.id = 'omni-modal';
     backdrop.innerHTML = `
-      <div class="modal-window omni-modal">
-        <div class="omni-search-header">
-          <span style="font-size: 18px; color: var(--theme-color);">🔍</span>
-          <input type="text" class="omni-search-input" id="omni-input" placeholder="Поиск по всем реестрам (Промпты, Скиллы, DAG, MCP, Правила)..." autofocus>
-          <span class="shortcut-badge">ESC to close</span>
+      <div class="omni-dialog">
+        <div class="omni-input-bar">
+          <i data-lucide="search" style="color: var(--theme-color, #6366f1); width: 20px; height: 20px;"></i>
+          <input type="text" class="omni-search-input" id="omni-query" placeholder="Глобальный поиск по реестрам, источникам, промптам (Ctrl+K)..." autofocus>
+          <span class="omni-kbd">ESC</span>
         </div>
-        <div style="padding: 8px 14px; background: rgba(0,0,0,0.2); display: flex; gap: 8px; border-bottom: 1px solid var(--border-subtle);">
-          <div class="tag-chip active omni-filter" data-cat="all">All</div>
-          <div class="tag-chip omni-filter" data-cat="prompts">Prompts</div>
-          <div class="tag-chip omni-filter" data-cat="skills">Skills</div>
-          <div class="tag-chip omni-filter" data-cat="workflows">Workflows</div>
-          <div class="tag-chip omni-filter" data-cat="mcp_servers">MCP</div>
-          <div class="tag-chip omni-filter" data-cat="rules">Rules</div>
+        <div class="omni-filter-chips">
+          <button class="omni-filter active" data-cat="all">All</button>
+          <button class="omni-filter" data-cat="sources">Sources</button>
+          <button class="omni-filter" data-cat="prompts">Prompts</button>
+          <button class="omni-filter" data-cat="skills">Skills</button>
+          <button class="omni-filter" data-cat="workflows">Workflows</button>
+          <button class="omni-filter" data-cat="mcp_servers">MCP</button>
+          <button class="omni-filter" data-cat="rules">Rules</button>
         </div>
         <div class="omni-results-list" id="omni-results">
-          <div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 13px;">
-            Введите поисковый запрос...
-          </div>
+          <div style="padding: 24px; text-align: center; color: var(--text-muted); font-size: 13px;">Введите поисковый запрос (например: MCP, architecture, security, langgraph)...</div>
         </div>
       </div>
     `;
 
     document.body.appendChild(backdrop);
+    if (window.lucide) window.lucide.createIcons();
 
-    const input = backdrop.querySelector('#omni-input');
+    const input = backdrop.querySelector('#omni-query');
     const resultsContainer = backdrop.querySelector('#omni-results');
     let currentCat = 'all';
 
@@ -159,13 +162,13 @@ class AppRouter {
         resultsContainer.innerHTML = results.map((r, i) => `
           <div class="omni-result-item ${i === 0 ? 'selected' : ''}" data-cat="${r.category}" data-id="${r.id}">
             <div style="font-size: 20px;">
-              ${r.category === 'prompts' ? '🟣' : (r.category === 'skills' ? '🟢' : (r.category === 'workflows' ? '🟡' : (r.category === 'mcp_servers' ? '🌐' : '🔴')))}
+              ${r.category === 'sources' ? '📚' : (r.category === 'prompts' ? '🟣' : (r.category === 'skills' ? '🟢' : (r.category === 'workflows' ? '🟡' : (r.category === 'mcp_servers' ? '🌐' : '🔴'))))}
             </div>
             <div class="omni-result-info">
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span class="omni-result-title">${r.title}</span>
                 <span class="badge badge-version">${r.typeLabel}</span>
-                <span class="badge badge-version">v${r.version || '1.0'}</span>
+                ${r.version ? `<span class="badge badge-version">v${r.version}</span>` : ''}
               </div>
               <div class="omni-result-desc">${r.description || ''}</div>
             </div>

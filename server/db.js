@@ -12,6 +12,7 @@ const BACKUP_DIR = path.join(DATA_DIR, 'backups');
 export class Database {
   constructor() {
     this.data = {
+      sources: [],
       prompts: [],
       skills: [],
       workflows: [],
@@ -34,6 +35,11 @@ export class Database {
       try {
         const raw = fs.readFileSync(DB_FILE, 'utf-8');
         this.data = JSON.parse(raw);
+        // Ensure sources exist in loaded DB
+        if (!this.data.sources || this.data.sources.length === 0) {
+          this.data.sources = initialSeedData.sources || [];
+          this.save();
+        }
       } catch (err) {
         console.error('Error reading db.json, restoring from seed:', err);
         this.resetToSeed();
@@ -91,6 +97,9 @@ export class Database {
   getAll(collection, filter = {}) {
     let items = this.getCollection(collection);
     
+    if (filter.category && collection === 'sources') {
+      items = items.filter(i => i.category === filter.category);
+    }
     if (filter.tag) {
       const tagLower = filter.tag.toLowerCase();
       items = items.filter(i => (i.tags || []).some(t => t.toLowerCase() === tagLower));
@@ -98,12 +107,16 @@ export class Database {
     if (filter.status) {
       items = items.filter(i => i.status === filter.status);
     }
+    if (filter.year && collection === 'sources') {
+      items = items.filter(i => i.year && i.year.includes(filter.year));
+    }
     if (filter.search) {
       const q = filter.search.toLowerCase();
       items = items.filter(i => 
         (i.name && i.name.toLowerCase().includes(q)) ||
         (i.title && i.title.toLowerCase().includes(q)) ||
         (i.description && i.description.toLowerCase().includes(q)) ||
+        (i.excerpt && i.excerpt.toLowerCase().includes(q)) ||
         (i.content && typeof i.content === 'string' && i.content.toLowerCase().includes(q)) ||
         (i.tags && i.tags.some(t => t.toLowerCase().includes(q)))
       );
@@ -134,7 +147,7 @@ export class Database {
           version: itemData.version || '1.0.0',
           timestamp: now,
           note: 'Initial creation',
-          content_snapshot: itemData.content || itemData.template || itemData.definition || null
+          content_snapshot: itemData.content || itemData.template || itemData.excerpt || itemData.definition || null
         }
       ]
     };
@@ -158,7 +171,8 @@ export class Database {
       (patchData.content !== undefined && patchData.content !== current.content) ||
       (patchData.template !== undefined && patchData.template !== current.template) ||
       (patchData.nodes !== undefined && JSON.stringify(patchData.nodes) !== JSON.stringify(current.nodes)) ||
-      (patchData.tools !== undefined && JSON.stringify(patchData.tools) !== JSON.stringify(current.tools));
+      (patchData.tools !== undefined && JSON.stringify(patchData.tools) !== JSON.stringify(current.tools)) ||
+      (patchData.excerpt !== undefined && patchData.excerpt !== current.excerpt);
 
     if (isContentChanged && !patchData.version) {
       const parts = (current.version || '1.0.0').split('.');
@@ -174,7 +188,7 @@ export class Database {
       version: newVersion,
       timestamp: now,
       note: patchData.version_note || 'Update',
-      content_snapshot: patchData.content || patchData.template || patchData.definition || current.content
+      content_snapshot: patchData.content || patchData.template || patchData.excerpt || patchData.definition || current.content
     };
 
     const updated = {
@@ -216,7 +230,7 @@ export class Database {
       for (const item of items) {
         let score = 0;
         const title = item.title || item.name || '';
-        const desc = item.description || '';
+        const desc = item.description || item.excerpt || '';
         const content = typeof item.content === 'string' ? item.content : (item.template || JSON.stringify(item.definition || ''));
         const tags = item.tags || [];
 
@@ -239,12 +253,14 @@ export class Database {
             color,
             icon,
             version: item.version,
+            url: item.url || null,
             updated_at: item.updated_at
           });
         }
       }
     };
 
+    searchCollection('sources', 'Source / Spec', 'var(--cat-sources, #3b82f6)', 'book-open');
     searchCollection('prompts', 'Prompt', 'var(--cat-prompts)', 'terminal');
     searchCollection('skills', 'Skill', 'var(--cat-skills)', 'sparkles');
     searchCollection('workflows', 'Workflow DAG', 'var(--cat-workflows)', 'git-merge');
@@ -256,6 +272,7 @@ export class Database {
 
   getStats() {
     return {
+      sources_count: (this.data.sources || []).length,
       prompts_count: (this.data.prompts || []).length,
       skills_count: (this.data.skills || []).length,
       workflows_count: (this.data.workflows || []).length,

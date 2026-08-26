@@ -37,16 +37,26 @@ export const dashboardView = {
           </div>
         </div>
 
-        <!-- 5 Category Metrics Cards -->
-        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 28px;">
+        <!-- 6 Category Metrics Cards -->
+        <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; margin-bottom: 28px;">
+          <!-- 0. Sources & Specs -->
+          <div class="artifact-card" style="border-top: 3px solid var(--cat-sources, #3b82f6); cursor: pointer;" onclick="window.appRouter.navigate('sources')">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <span style="font-size: 22px;">📚</span>
+              <span class="badge badge-sources">Sources</span>
+            </div>
+            <div style="font-size: 26px; font-weight: 800; font-family: var(--font-display);">${stats.sources_count || 0}</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">Спецификации, MCP, гайды</div>
+          </div>
+
           <!-- 1. Prompts -->
           <div class="artifact-card" style="border-top: 3px solid var(--cat-prompts); cursor: pointer;" onclick="window.appRouter.navigate('prompts')">
             <div style="display: flex; align-items: center; justify-content: space-between;">
               <span style="font-size: 22px;">🟣</span>
               <span class="badge badge-prompts">Prompts</span>
             </div>
-            <div style="font-size: 28px; font-weight: 800; font-family: var(--font-display);">${stats.prompts_count || 0}</div>
-            <div style="font-size: 12px; color: var(--text-secondary);">Шаблоны, переменные, песочница</div>
+            <div style="font-size: 26px; font-weight: 800; font-family: var(--font-display);">${stats.prompts_count || 0}</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">Шаблоны, переменные, песочница</div>
           </div>
 
           <!-- 2. Skills -->
@@ -55,8 +65,8 @@ export const dashboardView = {
               <span style="font-size: 22px;">🟢</span>
               <span class="badge badge-skills">Skills</span>
             </div>
-            <div style="font-size: 28px; font-weight: 800; font-family: var(--font-display);">${stats.skills_count || 0}</div>
-            <div style="font-size: 12px; color: var(--text-secondary);">SKILL.md, манифесты, валидатор</div>
+            <div style="font-size: 26px; font-weight: 800; font-family: var(--font-display);">${stats.skills_count || 0}</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">SKILL.md, манифесты, валидатор</div>
           </div>
 
           <!-- 3. Workflows -->
@@ -65,8 +75,8 @@ export const dashboardView = {
               <span style="font-size: 22px;">🟡</span>
               <span class="badge badge-workflows">Workflows</span>
             </div>
-            <div style="font-size: 28px; font-weight: 800; font-family: var(--font-display);">${stats.workflows_count || 0}</div>
-            <div style="font-size: 12px; color: var(--text-secondary);">Графы DAG, пайплайны, запуск</div>
+            <div style="font-size: 26px; font-weight: 800; font-family: var(--font-display);">${stats.workflows_count || 0}</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">Графы DAG, пайплайны, запуск</div>
           </div>
 
           <!-- 4. MCP Servers -->
@@ -75,8 +85,8 @@ export const dashboardView = {
               <span style="font-size: 22px;">🌐</span>
               <span class="badge badge-mcp">MCP Servers</span>
             </div>
-            <div style="font-size: 28px; font-weight: 800; font-family: var(--font-display);">${stats.mcp_servers_count || 0}</div>
-            <div style="font-size: 12px; color: var(--text-secondary);">Инспектор тулов, ping, mcp_config</div>
+            <div style="font-size: 26px; font-weight: 800; font-family: var(--font-display);">${stats.mcp_servers_count || 0}</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">Инспектор тулов, ping, mcp_config</div>
           </div>
 
           <!-- 5. Rules -->
@@ -85,8 +95,8 @@ export const dashboardView = {
               <span style="font-size: 22px;">🔴</span>
               <span class="badge badge-rules">Rules</span>
             </div>
-            <div style="font-size: 28px; font-weight: 800; font-family: var(--font-display);">${stats.rules_count || 0}</div>
-            <div style="font-size: 12px; color: var(--text-secondary);">AGENTS.md, директивы, компилятор</div>
+            <div style="font-size: 26px; font-weight: 800; font-family: var(--font-display);">${stats.rules_count || 0}</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">AGENTS.md, директивы, компилятор</div>
           </div>
         </div>
 
