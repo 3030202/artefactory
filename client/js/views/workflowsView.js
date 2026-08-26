@@ -1,6 +1,7 @@
 import { api } from '../api.js';
 import { Toast } from '../components/toast.js';
 import { DAGCanvas } from '../components/dagCanvas.js';
+import { renderEmptyState } from '../components/emptyState.js';
 
 export const workflowsView = {
   workflows: [],
@@ -69,7 +70,7 @@ export const workflowsView = {
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 10px; max-height: 600px; overflow-y: auto;">
-            ${filtered.map(w => `
+            ${filtered.length === 0 ? renderEmptyState('workflows') : filtered.map(w => `
               <div class="artifact-card ${this.selectedWf && this.selectedWf.id === w.id ? 'active' : ''}" data-id="${w.id}" style="cursor: pointer; padding: 16px; ${this.selectedWf && this.selectedWf.id === w.id ? 'border-color: var(--cat-workflows); background: rgba(245, 158, 11, 0.1);' : ''}">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
                   <div>
@@ -189,6 +190,25 @@ export const workflowsView = {
 
     container.querySelector('#btn-create-workflow')?.addEventListener('click', () => {
       this.openCreateModal(container);
+    });
+
+    container.querySelector('#btn-create-wf')?.addEventListener('click', () => {
+      this.openCreateModal(container);
+    });
+
+    container.querySelector('.btn-empty-primary')?.addEventListener('click', () => {
+      this.openCreateModal(container);
+    });
+
+    container.querySelector('.btn-empty-secondary')?.addEventListener('click', async () => {
+      Toast.info('Запуск синхронизации DAG-графов...');
+      try {
+        await api.syncSources();
+        Toast.success('Воркфлоу успешно обновлены!');
+        await this.loadWorkflows(container);
+      } catch (err) {
+        Toast.error(err.message || 'Ошибка синхронизации');
+      }
     });
   },
 

@@ -1,5 +1,7 @@
 import { api } from '../api.js';
 import { Toast } from '../components/toast.js';
+import { DiffViewer } from '../components/diffViewer.js';
+import { renderEmptyState } from '../components/emptyState.js';
 
 export const skillsView = {
   skills: [],
@@ -79,11 +81,7 @@ export const skillsView = {
 
       <!-- Skills Grid -->
       <div class="cards-grid">
-        ${filtered.length === 0 ? `
-          <div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-muted);">
-            Скиллы не найдены по заданным критериям.
-          </div>
-        ` : filtered.map(s => `
+        ${filtered.length === 0 ? renderEmptyState('skills') : filtered.map(s => `
           <div class="artifact-card" data-id="${s.id}">
             <div class="card-header">
               <div>
@@ -158,6 +156,21 @@ export const skillsView = {
 
     container.querySelector('#btn-create-skill')?.addEventListener('click', () => {
       this.openEditModal(null, container);
+    });
+
+    container.querySelector('.btn-empty-primary')?.addEventListener('click', () => {
+      this.openEditModal(null, container);
+    });
+
+    container.querySelector('.btn-empty-secondary')?.addEventListener('click', async () => {
+      Toast.info('Запуск синхронизации навыков...');
+      try {
+        await api.syncSources();
+        Toast.success('Навыки успешно обновлены!');
+        await this.loadSkills(container);
+      } catch (err) {
+        Toast.error(err.message || 'Ошибка синхронизации');
+      }
     });
 
     container.querySelectorAll('.btn-open-validator').forEach(btn => {

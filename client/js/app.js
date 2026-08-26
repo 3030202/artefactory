@@ -9,6 +9,8 @@ import { mcpView } from './views/mcpView.js';
 import { rulesView } from './views/rulesView.js';
 import { gitopsView } from './views/gitopsView.js';
 import { tuiEngine } from './tui/tui_engine.js';
+import { Icons } from './components/icons.js';
+import { RuntimeWidget } from './components/runtimeWidget.js';
 
 class AppRouter {
   constructor() {
@@ -29,7 +31,19 @@ class AppRouter {
     this.init();
   }
 
+  hydrateIcons() {
+    document.querySelectorAll('[data-icon]').forEach(el => {
+      const iconName = el.getAttribute('data-icon');
+      if (Icons[iconName]) {
+        el.innerHTML = Icons[iconName](el.classList.contains('dock-icon') ? 20 : 18);
+      }
+    });
+  }
+
   init() {
+    this.hydrateIcons();
+    RuntimeWidget.init();
+
     // Desktop & Drawer Navigation items click
     document.querySelectorAll('.nav-item[data-route]').forEach(item => {
       item.addEventListener('click', () => {
@@ -45,6 +59,11 @@ class AppRouter {
         const route = item.getAttribute('data-route');
         this.navigate(route);
       });
+    });
+
+    // Mobile Bottom Dock "More" button click
+    document.getElementById('btn-dock-more')?.addEventListener('click', () => {
+      this.openMobileMoreSheet();
     });
 
     // Mobile Hamburger Toggle
@@ -95,6 +114,96 @@ class AppRouter {
     if (localStorage.getItem('artefactory_view_mode') === 'tui') {
       tuiEngine.activate();
     }
+  }
+
+  openMobileMoreSheet() {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop open';
+
+    backdrop.innerHTML = `
+      <div class="modal-window">
+        <div class="modal-drag-handle"></div>
+        <div class="modal-header">
+          <div class="modal-title">
+            <span>${Icons.more(18)}</span>
+            <span>All Registries & Tools</span>
+          </div>
+          <button class="btn-icon btn-close-modal">✕</button>
+        </div>
+
+        <div class="modal-body" style="gap: 10px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="artifact-card" data-more-route="sources" style="padding: 14px; cursor: pointer; display: flex; align-items: center; gap: 10px;">
+              <span style="color: var(--cat-sources, #3b82f6);">${Icons.sources(20)}</span>
+              <div>
+                <div style="font-size: 13px; font-weight: 700;">Sources & Specs</div>
+                <div style="font-size: 11px; color: var(--text-muted);">21 specs</div>
+              </div>
+            </div>
+
+            <div class="artifact-card" data-more-route="skills" style="padding: 14px; cursor: pointer; display: flex; align-items: center; gap: 10px;">
+              <span style="color: var(--cat-skills, #10b981);">${Icons.skills(20)}</span>
+              <div>
+                <div style="font-size: 13px; font-weight: 700;">Skills Registry</div>
+                <div style="font-size: 11px; color: var(--text-muted);">SKILL.md</div>
+              </div>
+            </div>
+
+            <div class="artifact-card" data-more-route="mcp" style="padding: 14px; cursor: pointer; display: flex; align-items: center; gap: 10px;">
+              <span style="color: var(--cat-mcp, #06b6d4);">${Icons.mcp(20)}</span>
+              <div>
+                <div style="font-size: 13px; font-weight: 700;">MCP Servers</div>
+                <div style="font-size: 11px; color: var(--text-muted);">JSON-RPC</div>
+              </div>
+            </div>
+
+            <div class="artifact-card" data-more-route="rules" style="padding: 14px; cursor: pointer; display: flex; align-items: center; gap: 10px;">
+              <span style="color: var(--cat-rules, #f43f5e);">${Icons.rules(20)}</span>
+              <div>
+                <div style="font-size: 13px; font-weight: 700;">Rules & Policies</div>
+                <div style="font-size: 11px; color: var(--text-muted);">AGENTS.md</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="border-top: 1px solid var(--border-subtle); margin-top: 6px; padding-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+            <button class="btn btn-secondary" id="btn-more-tui" style="justify-content: flex-start; gap: 10px; padding: 10px;">
+              <span>${Icons.terminal(18)}</span>
+              <span>Switch to Dense TUI Mode (8.0x101)</span>
+            </button>
+            <button class="btn btn-secondary" id="btn-more-telemetry" style="justify-content: flex-start; gap: 10px; padding: 10px;">
+              <span>${Icons.server(18)}</span>
+              <span>Docker Runtime Telemetry & Health</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-primary btn-close-modal">Close</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(backdrop);
+    backdrop.querySelectorAll('.btn-close-modal').forEach(b => b.addEventListener('click', () => backdrop.remove()));
+
+    backdrop.querySelectorAll('[data-more-route]').forEach(el => {
+      el.addEventListener('click', () => {
+        const route = el.getAttribute('data-more-route');
+        backdrop.remove();
+        this.navigate(route);
+      });
+    });
+
+    backdrop.querySelector('#btn-more-tui')?.addEventListener('click', () => {
+      backdrop.remove();
+      tuiEngine.activate();
+    });
+
+    backdrop.querySelector('#btn-more-telemetry')?.addEventListener('click', () => {
+      backdrop.remove();
+      RuntimeWidget.openTelemetryModal();
+    });
   }
 
   toggleMobileDrawer() {
@@ -159,13 +268,31 @@ class AppRouter {
 
     // Set Theme on body and root
     document.body.setAttribute('data-theme', route);
-    document.getElementById('app-root')?.setAttribute('data-theme', route);
+    const root = document.getElementById('app-root');
+    if (root) root.setAttribute('data-theme', route);
+
+    // Update Breadcrumb
+    const bc = document.getElementById('breadcrumb-current');
+    if (bc) {
+      const labels = {
+        dashboard: 'Dashboard',
+        sources: 'Sources & Specs',
+        gitops: 'GitOps & Sync Hub',
+        prompts: 'Prompts Studio',
+        skills: 'Skills Registry',
+        workflows: 'Workflows (DAG)',
+        mcp: 'MCP Servers',
+        rules: 'Rules & Guardrails'
+      };
+      bc.textContent = labels[route] || route;
+    }
 
     // Render View
     if (this.container) {
       this.routes[route].render(this.container, this);
     }
 
+    this.hydrateIcons();
     this.updateStatsCounters();
   }
 

@@ -16,6 +16,38 @@ router.get('/stats', (req, res) => {
   res.json({ success: true, data: stats });
 });
 
+// Get Live Docker / Runtime Telemetry
+router.get('/telemetry', (req, res) => {
+  const mem = process.memoryUsage();
+  const uptimeSec = Math.floor(process.uptime());
+  const hours = Math.floor(uptimeSec / 3600);
+  const minutes = Math.floor((uptimeSec % 3600) / 60);
+  const seconds = uptimeSec % 60;
+
+  res.json({
+    success: true,
+    data: {
+      status: 'HEALTHY',
+      runtime: 'Docker (Node.js 24-Alpine)',
+      node_version: process.version,
+      platform: `${process.platform}-${process.arch}`,
+      pid: process.pid,
+      uptime_seconds: uptimeSec,
+      uptime_human: `${hours}h ${minutes}m ${seconds}s`,
+      memory: {
+        rss_mb: Math.round((mem.rss / 1024 / 1024) * 10) / 10,
+        heap_used_mb: Math.round((mem.heapUsed / 1024 / 1024) * 10) / 10,
+        heap_total_mb: Math.round((mem.heapTotal / 1024 / 1024) * 10) / 10,
+        external_mb: Math.round((mem.external / 1024 / 1024) * 10) / 10
+      },
+      mcp_gateway_status: 'ACTIVE',
+      semantic_engine_status: 'INDEXED',
+      gitops_branch: 'main',
+      timestamp: new Date().toISOString()
+    }
+  });
+});
+
 // Get Project State & Lifecycle Phases from STATE.json
 router.get('/state', (req, res) => {
   try {

@@ -1,5 +1,6 @@
 import { api } from '../api.js';
 import { Toast } from '../components/toast.js';
+import { renderEmptyState } from '../components/emptyState.js';
 
 export const mcpView = {
   servers: [],
@@ -103,11 +104,7 @@ export const mcpView = {
 
       <!-- Servers Grid -->
       <div class="cards-grid">
-        ${filtered.length === 0 ? `
-          <div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-muted);">
-            MCP серверы не найдены.
-          </div>
-        ` : filtered.map(s => `
+        ${filtered.length === 0 ? renderEmptyState('mcp_servers') : filtered.map(s => `
           <div class="artifact-card" data-id="${s.id}">
             <div class="card-header">
               <div>
@@ -206,6 +203,14 @@ export const mcpView = {
 
     container.querySelector('#btn-create-mcp')?.addEventListener('click', () => {
       this.openEditModal(null, container);
+    });
+
+    container.querySelector('.btn-empty-primary')?.addEventListener('click', () => {
+      this.openEditModal(null, container);
+    });
+
+    container.querySelector('.btn-empty-secondary')?.addEventListener('click', () => {
+      this.openGatewayTesterModal();
     });
 
     container.querySelector('#btn-export-mcp-config')?.addEventListener('click', async () => {

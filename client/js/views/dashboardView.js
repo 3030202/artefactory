@@ -1,5 +1,6 @@
 import { api } from '../api.js';
 import { Toast } from '../components/toast.js';
+import { Icons } from '../components/icons.js';
 
 export const dashboardView = {
   async render(container, app) {
@@ -18,10 +19,10 @@ export const dashboardView = {
         <div class="section-hero">
           <div class="section-title-group">
             <div class="section-title">
-              <span style="font-size: 28px;">🎛️</span>
+              <span style="color: var(--primary);">${Icons.dashboard(26)}</span>
               <span>Prompt Ops Control Tower</span>
               <span class="badge badge-success">v2.0.0-prod</span>
-              <span class="badge" style="background: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.4);">${state.target_mode || 'EXTENDED'}</span>
+              <span class="badge badge-gitops">GitOps Active</span>
             </div>
             <div class="section-desc">
               Централизованный пункт управления и изолированные реестры артефактов ИИ: Промпты, Скиллы, Воркфлоу (DAG), MCP-серверы и Системные директивы.
@@ -40,66 +41,91 @@ export const dashboardView = {
           </div>
         </div>
 
+        <!-- Quickstart Onboarding Banner -->
+        <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 14px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="color: #fbbf24;">${Icons.sparkles(22)}</div>
+            <div>
+              <div style="font-size: 13px; font-weight: 700; color: var(--text-primary);">Quickstart Actions & Onboarding</div>
+              <div style="font-size: 11px; color: var(--text-secondary);">Создавайте артефакты в 1 клик или синхронизируйте базу с GitHub</div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-secondary btn-sm" onclick="window.appRouter.navigate('prompts')" style="font-size: 11px; padding: 5px 10px;">
+              <span>${Icons.prompts(14)}</span> + New Prompt
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="window.appRouter.navigate('skills')" style="font-size: 11px; padding: 5px 10px;">
+              <span>${Icons.skills(14)}</span> + New Skill
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="window.appRouter.navigate('mcp')" style="font-size: 11px; padding: 5px 10px;">
+              <span>${Icons.mcp(14)}</span> + Register MCP
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="window.appRouter.navigate('gitops')" style="font-size: 11px; padding: 5px 10px;">
+              <span>${Icons.gitops(14)}</span> 📥 Git Pull / Push
+            </button>
+          </div>
+        </div>
+
         <!-- 6 Category Metrics Cards -->
         <div class="dashboard-metrics-grid">
           <!-- 0. Sources & Specs -->
           <div class="artifact-card" style="border-top: 3px solid var(--cat-sources, #3b82f6); cursor: pointer;" onclick="window.appRouter.navigate('sources')">
             <div style="display: flex; align-items: center; justify-content: space-between;">
-              <span style="font-size: 22px;">📚</span>
+              <span style="color: var(--cat-sources);">${Icons.sources(22)}</span>
               <span class="badge badge-sources">Sources</span>
             </div>
-            <div style="font-size: 26px; font-weight: 800; font-family: var(--font-display);">${stats.sources_count || 0}</div>
+            <div style="font-size: 26px; font-weight: 800; font-family: var(--font-mono); margin: 6px 0 2px 0;">${stats.sources_count || 0}</div>
             <div style="font-size: 11px; color: var(--text-secondary);">Спецификации, MCP, гайды</div>
           </div>
 
           <!-- 1. Prompts -->
           <div class="artifact-card" style="border-top: 3px solid var(--cat-prompts); cursor: pointer;" onclick="window.appRouter.navigate('prompts')">
             <div style="display: flex; align-items: center; justify-content: space-between;">
-              <span style="font-size: 22px;">🟣</span>
+              <span style="color: var(--cat-prompts);">${Icons.prompts(22)}</span>
               <span class="badge badge-prompts">Prompts</span>
             </div>
-            <div style="font-size: 26px; font-weight: 800; font-family: var(--font-display);">${stats.prompts_count || 0}</div>
-            <div style="font-size: 11px; color: var(--text-secondary);">Шаблоны, переменные, песочница</div>
+            <div style="font-size: 26px; font-weight: 800; font-family: var(--font-mono); margin: 6px 0 2px 0;">${stats.prompts_count || 0}</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">Шаблоны, переменные, токены</div>
           </div>
 
           <!-- 2. Skills -->
           <div class="artifact-card" style="border-top: 3px solid var(--cat-skills); cursor: pointer;" onclick="window.appRouter.navigate('skills')">
             <div style="display: flex; align-items: center; justify-content: space-between;">
-              <span style="font-size: 22px;">🟢</span>
+              <span style="color: var(--cat-skills);">${Icons.skills(22)}</span>
               <span class="badge badge-skills">Skills</span>
             </div>
-            <div style="font-size: 26px; font-weight: 800; font-family: var(--font-display);">${stats.skills_count || 0}</div>
-            <div style="font-size: 11px; color: var(--text-secondary);">SKILL.md, манифесты, валидатор</div>
+            <div style="font-size: 26px; font-weight: 800; font-family: var(--font-mono); margin: 6px 0 2px 0;">${stats.skills_count || 0}</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">SKILL.md, манифесты, схемы</div>
           </div>
 
           <!-- 3. Workflows -->
           <div class="artifact-card" style="border-top: 3px solid var(--cat-workflows); cursor: pointer;" onclick="window.appRouter.navigate('workflows')">
             <div style="display: flex; align-items: center; justify-content: space-between;">
-              <span style="font-size: 22px;">🟡</span>
+              <span style="color: var(--cat-workflows);">${Icons.workflows(22)}</span>
               <span class="badge badge-workflows">Workflows</span>
             </div>
-            <div style="font-size: 26px; font-weight: 800; font-family: var(--font-display);">${stats.workflows_count || 0}</div>
+            <div style="font-size: 26px; font-weight: 800; font-family: var(--font-mono); margin: 6px 0 2px 0;">${stats.workflows_count || 0}</div>
             <div style="font-size: 11px; color: var(--text-secondary);">Графы DAG, пайплайны, запуск</div>
           </div>
 
           <!-- 4. MCP Servers -->
           <div class="artifact-card" style="border-top: 3px solid var(--cat-mcp); cursor: pointer;" onclick="window.appRouter.navigate('mcp')">
             <div style="display: flex; align-items: center; justify-content: space-between;">
-              <span style="font-size: 22px;">🌐</span>
+              <span style="color: var(--cat-mcp);">${Icons.mcp(22)}</span>
               <span class="badge badge-mcp">MCP Servers</span>
             </div>
-            <div style="font-size: 26px; font-weight: 800; font-family: var(--font-display);">${stats.mcp_servers_count || 0}</div>
-            <div style="font-size: 11px; color: var(--text-secondary);">Инспектор тулов, ping, mcp_config</div>
+            <div style="font-size: 26px; font-weight: 800; font-family: var(--font-mono); margin: 6px 0 2px 0;">${stats.mcp_servers_count || 0}</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">Инспектор тулов, SSE Gateway</div>
           </div>
 
           <!-- 5. Rules -->
           <div class="artifact-card" style="border-top: 3px solid var(--cat-rules); cursor: pointer;" onclick="window.appRouter.navigate('rules')">
             <div style="display: flex; align-items: center; justify-content: space-between;">
-              <span style="font-size: 22px;">🔴</span>
+              <span style="color: var(--cat-rules);">${Icons.rules(22)}</span>
               <span class="badge badge-rules">Rules</span>
             </div>
-            <div style="font-size: 26px; font-weight: 800; font-family: var(--font-display);">${stats.rules_count || 0}</div>
-            <div style="font-size: 11px; color: var(--text-secondary);">AGENTS.md, директивы, компилятор</div>
+            <div style="font-size: 26px; font-weight: 800; font-family: var(--font-mono); margin: 6px 0 2px 0;">${stats.rules_count || 0}</div>
+            <div style="font-size: 11px; color: var(--text-secondary);">AGENTS.md, гардрайлы, OWASP</div>
           </div>
         </div>
 

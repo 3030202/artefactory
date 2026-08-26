@@ -1,5 +1,6 @@
 import { api } from '../api.js';
 import { Toast } from '../components/toast.js';
+import { renderEmptyState } from '../components/emptyState.js';
 
 export const rulesView = {
   rules: [],
@@ -79,11 +80,7 @@ export const rulesView = {
 
       <!-- Rules Grid -->
       <div class="cards-grid">
-        ${filtered.length === 0 ? `
-          <div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-muted);">
-            Правила не найдены.
-          </div>
-        ` : filtered.map(r => `
+        ${filtered.length === 0 ? renderEmptyState('rules') : filtered.map(r => `
           <div class="artifact-card" data-id="${r.id}">
             <div class="card-header">
               <div>
@@ -152,6 +149,21 @@ export const rulesView = {
 
     container.querySelector('#btn-create-rule')?.addEventListener('click', () => {
       this.openEditModal(null, container);
+    });
+
+    container.querySelector('.btn-empty-primary')?.addEventListener('click', () => {
+      this.openEditModal(null, container);
+    });
+
+    container.querySelector('.btn-empty-secondary')?.addEventListener('click', async () => {
+      Toast.info('Запуск синхронизации правил безопасности...');
+      try {
+        await api.syncSources();
+        Toast.success('Правила успешно обновлены!');
+        await this.loadRules(container);
+      } catch (err) {
+        Toast.error(err.message || 'Ошибка синхронизации');
+      }
     });
 
     container.querySelector('#btn-compile-rules')?.addEventListener('click', async () => {

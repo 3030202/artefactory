@@ -1,6 +1,7 @@
 import { api } from '../api.js';
 import { Toast } from '../components/toast.js';
 import { DiffViewer } from '../components/diffViewer.js';
+import { renderEmptyState } from '../components/emptyState.js';
 
 export const promptsView = {
   prompts: [],
@@ -81,11 +82,7 @@ export const promptsView = {
 
       <!-- Prompts Grid -->
       <div class="cards-grid">
-        ${filtered.length === 0 ? `
-          <div style="grid-column: 1 / -1; padding: 40px; text-align: center; color: var(--text-muted);">
-            Промпты не найдены по заданным критериям.
-          </div>
-        ` : filtered.map(p => `
+        ${filtered.length === 0 ? renderEmptyState('prompts') : filtered.map(p => `
           <div class="artifact-card" data-id="${p.id}">
             <div class="card-header">
               <div>
@@ -160,6 +157,21 @@ export const promptsView = {
 
     container.querySelector('#btn-create-prompt')?.addEventListener('click', () => {
       this.openEditModal(null, container);
+    });
+
+    container.querySelector('.btn-empty-primary')?.addEventListener('click', () => {
+      this.openEditModal(null, container);
+    });
+
+    container.querySelector('.btn-empty-secondary')?.addEventListener('click', async () => {
+      Toast.info('Запуск динамического обновления промптов...');
+      try {
+        await api.syncSources();
+        Toast.success('Промпты успешно загружены из источников!');
+        await this.loadPrompts(container);
+      } catch (err) {
+        Toast.error(err.message || 'Ошибка синхронизации');
+      }
     });
 
     container.querySelectorAll('.btn-open-playground').forEach(btn => {
