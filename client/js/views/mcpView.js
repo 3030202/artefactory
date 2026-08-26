@@ -44,12 +44,16 @@ export const mcpView = {
             <span>🌐</span>
             <span>MCP Servers & Tools Registry</span>
             <span class="badge badge-mcp">${this.servers.length} Servers</span>
+            <span class="badge badge-success" style="font-size: 11px;">● Continuous Live Stream</span>
           </div>
           <div class="section-desc">
-            Управление серверами Model Context Protocol (Stdio / SSE), инспекция и тестирование схем инструментов (Tools), проверка доступности (Ping) и экспорт конфигурации <code style="color: #22d3ee;">mcp_config.json</code>.
+            Постоянно обновляемый каталог серверов Model Context Protocol (@modelcontextprotocol/servers, GitHub, SQLite, Ollama, Puppeteer) с инспекцией JSON-RPC тулов и экспортом <code style="color: #22d3ee;">mcp_config.json</code>.
           </div>
         </div>
         <div class="header-actions">
+          <button class="btn btn-secondary" id="btn-sync-mcp" title="Обновить MCP-серверы из источников">
+            <span>🔄</span> Live Sync Feed
+          </button>
           <button class="btn btn-secondary" id="btn-export-mcp-config">
             <span>⚙️</span> Export mcp_config.json
           </button>
@@ -82,10 +86,14 @@ export const mcpView = {
           <div class="artifact-card" data-id="${s.id}">
             <div class="card-header">
               <div>
+                ${s.source_title ? `<div class="badge badge-sources" style="font-size: 9px; margin-bottom: 3px;">📡 ${s.source_title}</div>` : ''}
                 <div class="card-title">${s.title || s.name}</div>
                 <div style="font-family: var(--font-mono); font-size: 11px; color: #22d3ee; margin-top: 2px;">${s.name}</div>
               </div>
-              <span class="badge badge-mcp">${(s.transport || 'stdio').toUpperCase()}</span>
+              <div class="flex-center gap-xs">
+                <span class="badge badge-mcp">${(s.transport || 'stdio').toUpperCase()}</span>
+                ${s.auto_synced ? `<span class="badge badge-success" style="font-size: 9px;">Live</span>` : ''}
+              </div>
             </div>
 
             <div class="card-desc">${s.description || 'No description available.'}</div>
@@ -94,6 +102,7 @@ export const mcpView = {
               <span>🟢 Status: ${s.status || 'ONLINE'}</span>
               <span>•</span>
               <span>🛠️ ${(s.tools || []).length} tools exposed</span>
+              ${s.version ? `<span>• v${s.version}</span>` : ''}
             </div>
 
             <!-- Command or Endpoint snippet -->
@@ -124,6 +133,18 @@ export const mcpView = {
     `;
 
     // Listeners
+    container.querySelector('#btn-sync-mcp')?.addEventListener('click', async () => {
+      Toast.info('Синхронизация MCP-серверов из канонических источников...');
+      try {
+        await api.syncSources();
+        Toast.success('Реестр MCP-серверов успешно обновлен!');
+        await this.loadServers(container);
+        if (window.appRouter) window.appRouter.updateStatsCounters();
+      } catch (err) {
+        Toast.error(err.message || 'Ошибка синхронизации');
+      }
+    });
+
     const searchInput = container.querySelector('#mcp-search');
     searchInput?.addEventListener('input', (e) => {
       this.searchQuery = e.target.value;

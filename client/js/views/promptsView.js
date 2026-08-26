@@ -49,12 +49,16 @@ export const promptsView = {
             <span>🟣</span>
             <span>Prompts Registry & Studio</span>
             <span class="badge badge-prompts">${this.prompts.length} Prompts</span>
+            <span class="badge badge-success" style="font-size: 11px;">● Continuous Live Stream</span>
           </div>
           <div class="section-desc">
-            Централизованный реестр системных и пользовательских промптов, шаблонизатор с переменными <code style="color: #c084fc;">{{var}}</code>, интерактивная песочница, подсчёт токенов и версионирование.
+            Централизованный постоянно обновляемый реестр промптов из канонических источников (Anthropic, DSPy, OpenAI, Awesome Prompts) с замером токенов in/out и песочницей.
           </div>
         </div>
         <div class="header-actions">
+          <button class="btn btn-secondary" id="btn-sync-prompts" title="Обновить промпты из источников">
+            <span>🔄</span> Live Sync Feed
+          </button>
           <button class="btn btn-primary" id="btn-create-prompt">
             <span>✨</span> New Prompt Template
           </button>
@@ -84,15 +88,21 @@ export const promptsView = {
         ` : filtered.map(p => `
           <div class="artifact-card" data-id="${p.id}">
             <div class="card-header">
-              <div class="card-title">${p.title}</div>
-              <span class="badge badge-version">v${p.version || '1.0.0'}</span>
+              <div>
+                ${p.source_title ? `<div class="badge badge-sources" style="font-size: 10px; margin-bottom: 4px;">📡 ${p.source_title}</div>` : ''}
+                <div class="card-title">${p.title}</div>
+              </div>
+              <div class="flex-center gap-xs">
+                <span class="badge badge-version">v${p.version || '1.0.0'}</span>
+                ${p.auto_synced ? `<span class="badge badge-success" style="font-size: 9px;">Live</span>` : ''}
+              </div>
             </div>
             <div class="card-desc">${p.description || 'No description provided.'}</div>
             
             <div class="card-metadata">
               <span>🤖 ${p.model || 'Universal'}</span>
               <span>•</span>
-              <span>📊 ~${Math.ceil((p.template || '').length / 4)} tokens</span>
+              <span>📊 ~${p.in_tokens_est || Math.ceil((p.template || '').length / 4)} in / ~${p.out_tokens_est || 800} out tok</span>
               <span>•</span>
               <span>🔤 ${(p.variables || []).length} vars</span>
             </div>
@@ -134,6 +144,18 @@ export const promptsView = {
         this.selectedTag = chip.getAttribute('data-tag');
         this.renderUI(container);
       });
+    });
+
+    container.querySelector('#btn-sync-prompts')?.addEventListener('click', async () => {
+      Toast.info('Синхронизация промптов из канонических источников...');
+      try {
+        await api.syncSources();
+        Toast.success('Реестр промптов успешно обновлен!');
+        await this.loadPrompts(container);
+        if (window.appRouter) window.appRouter.updateStatsCounters();
+      } catch (err) {
+        Toast.error(err.message || 'Ошибка синхронизации');
+      }
     });
 
     container.querySelector('#btn-create-prompt')?.addEventListener('click', () => {

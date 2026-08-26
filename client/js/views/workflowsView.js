@@ -43,12 +43,16 @@ export const workflowsView = {
             <span>🟡</span>
             <span>Workflows & DAG Pipelines</span>
             <span class="badge badge-workflows">${this.workflows.length} Pipelines</span>
+            <span class="badge badge-success" style="font-size: 11px;">● Continuous Live Stream</span>
           </div>
           <div class="section-desc">
-            Визуализация направленных ациклических графов (DAG), мульти-агентные цепочки исполнения, пошаговая симуляция шагов и экспорт в Airflow/Python.
+            Постоянно обновляемый реестр многоагентных DAG графов (LangGraph, DSPy Teleprompter, Promptfoo Matrix) с интерактивной симуляцией.
           </div>
         </div>
         <div class="header-actions">
+          <button class="btn btn-secondary" id="btn-sync-workflows" title="Обновить воркфлоу из источников">
+            <span>🔄</span> Live Sync Feed
+          </button>
           <button class="btn btn-primary" id="btn-create-workflow">
             <span>✨</span> New Workflow DAG
           </button>
@@ -68,8 +72,14 @@ export const workflowsView = {
             ${filtered.map(w => `
               <div class="artifact-card ${this.selectedWf && this.selectedWf.id === w.id ? 'active' : ''}" data-id="${w.id}" style="cursor: pointer; padding: 16px; ${this.selectedWf && this.selectedWf.id === w.id ? 'border-color: var(--cat-workflows); background: rgba(245, 158, 11, 0.1);' : ''}">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
-                  <div style="font-weight: 700; font-size: 14px; color: var(--text-primary);">${w.title}</div>
-                  <span class="badge badge-workflows">v${w.version || '1.0'}</span>
+                  <div>
+                    ${w.source_title ? `<div class="badge badge-sources" style="font-size: 9px; margin-bottom: 3px;">📡 ${w.source_title}</div>` : ''}
+                    <div style="font-weight: 700; font-size: 14px; color: var(--text-primary);">${w.title}</div>
+                  </div>
+                  <div class="flex-center gap-xs">
+                    <span class="badge badge-workflows">v${w.version || '1.0'}</span>
+                    ${w.auto_synced ? `<span class="badge badge-success" style="font-size: 9px;">Live</span>` : ''}
+                  </div>
                 </div>
                 <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 8px;">${w.description || ''}</div>
                 <div style="display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: var(--text-muted);">
@@ -162,6 +172,18 @@ export const workflowsView = {
       if (this.selectedWf) {
         navigator.clipboard.writeText(JSON.stringify(this.selectedWf, null, 2));
         Toast.success('DAG JSON definition copied to clipboard!');
+      }
+    });
+
+    container.querySelector('#btn-sync-workflows')?.addEventListener('click', async () => {
+      Toast.info('Синхронизация воркфлоу из канонических источников...');
+      try {
+        await api.syncSources();
+        Toast.success('Реестр воркфлоу успешно обновлен!');
+        await this.loadWorkflows(container);
+        if (window.appRouter) window.appRouter.updateStatsCounters();
+      } catch (err) {
+        Toast.error(err.message || 'Ошибка синхронизации');
       }
     });
 

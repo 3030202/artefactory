@@ -47,12 +47,16 @@ export const skillsView = {
             <span>🟢</span>
             <span>Skills Registry & Validator</span>
             <span class="badge badge-skills">${this.skills.length} Skills</span>
+            <span class="badge badge-success" style="font-size: 11px;">● Continuous Live Stream</span>
           </div>
           <div class="section-desc">
-            Реестр навыков агентов (Antigravity & Gemini Skills), валидация YAML Frontmatter в <code style="color: #34d399;">SKILL.md</code>, файловая структура и экспорт в <code style="color: #34d399;">.agents/skills/</code>.
+            Постоянно обновляемый реестр навыков агентов (Antigravity, MCP, LangGraph, Telegram) с валидацией YAML Frontmatter в <code style="color: #34d399;">SKILL.md</code>.
           </div>
         </div>
         <div class="header-actions">
+          <button class="btn btn-secondary" id="btn-sync-skills" title="Обновить навыки из источников">
+            <span>🔄</span> Live Sync Feed
+          </button>
           <button class="btn btn-primary" id="btn-create-skill">
             <span>✨</span> New Skill (SKILL.md)
           </button>
@@ -83,10 +87,14 @@ export const skillsView = {
           <div class="artifact-card" data-id="${s.id}">
             <div class="card-header">
               <div>
+                ${s.source_title ? `<div class="badge badge-sources" style="font-size: 10px; margin-bottom: 4px;">📡 ${s.source_title}</div>` : ''}
                 <div class="card-title">${s.title || s.name}</div>
                 <div style="font-family: var(--font-mono); font-size: 11px; color: #34d399; margin-top: 2px;">skills/${s.name}/SKILL.md</div>
               </div>
-              <span class="badge badge-version">v${s.version || '1.0.0'}</span>
+              <div class="flex-center gap-xs">
+                <span class="badge badge-version">v${s.version || '1.0.0'}</span>
+                ${s.auto_synced ? `<span class="badge badge-success" style="font-size: 9px;">Live</span>` : ''}
+              </div>
             </div>
 
             <div class="card-desc">${s.description || 'No description available.'}</div>
@@ -108,7 +116,7 @@ export const skillsView = {
               </button>
               <div class="card-actions">
                 <button class="btn-icon btn-export-skill" data-id="${s.id}" title="Export to .agents/skills/ format">📦</button>
-                <button class="btn-icon btn-edit-skill" data-id="${s.id}" title="Edit Skill">✏️</button>
+                <button class="btn-icon btn-edit-skill" data-id="${s.id}" title="Edit SKILL.md">✏️</button>
                 <button class="btn-icon btn-delete-skill" data-id="${s.id}" title="Delete" style="color: var(--status-danger);">🗑️</button>
               </div>
             </div>
@@ -118,6 +126,18 @@ export const skillsView = {
     `;
 
     // Listeners
+    container.querySelector('#btn-sync-skills')?.addEventListener('click', async () => {
+      Toast.info('Синхронизация навыков из канонических источников...');
+      try {
+        await api.syncSources();
+        Toast.success('Реестр навыков успешно обновлен!');
+        await this.loadSkills(container);
+        if (window.appRouter) window.appRouter.updateStatsCounters();
+      } catch (err) {
+        Toast.error(err.message || 'Ошибка синхронизации');
+      }
+    });
+
     const searchInput = container.querySelector('#skills-search');
     searchInput?.addEventListener('input', (e) => {
       this.searchQuery = e.target.value;

@@ -44,12 +44,16 @@ export const rulesView = {
             <span>🔴</span>
             <span>Rules, Guardrails & Directives</span>
             <span class="badge badge-rules">${this.rules.length} Rules</span>
+            <span class="badge badge-success" style="font-size: 11px;">● Continuous Live Stream</span>
           </div>
           <div class="section-desc">
-            Реестр правил и ограничений для ИИ-агентов (<code style="color: #fb7185;">AGENTS.md</code>, <code style="color: #fb7185;">GEMINI.md</code>), проверка приоритетов и компиляция единого системного промпта.
+            Постоянно обновляемый реестр правил и гардрайлов ИИ (OWASP GenAI Top 10, MITRE ATLAS, Constitutional AI, AGENTS.md) с проверкой инвариантов и компилятором директив.
           </div>
         </div>
         <div class="header-actions">
+          <button class="btn btn-secondary" id="btn-sync-rules" title="Обновить правила из источников">
+            <span>🔄</span> Live Sync Feed
+          </button>
           <button class="btn btn-secondary" id="btn-compile-rules">
             <span>📜</span> Compile System Directives
           </button>
@@ -83,10 +87,14 @@ export const rulesView = {
           <div class="artifact-card" data-id="${r.id}">
             <div class="card-header">
               <div>
+                ${r.source_title ? `<div class="badge badge-sources" style="font-size: 9px; margin-bottom: 3px;">📡 ${r.source_title}</div>` : ''}
                 <div class="card-title">${r.title}</div>
                 <div style="font-family: var(--font-mono); font-size: 11px; color: #fb7185; margin-top: 2px;">Target: ${r.target_file || 'AGENTS.md'}</div>
               </div>
-              <span class="badge ${r.priority === 'CRITICAL' ? 'badge-danger' : (r.priority === 'HIGH' ? 'badge-warning' : 'badge-rules')}">${r.priority}</span>
+              <div class="flex-center gap-xs">
+                <span class="badge ${r.priority === 'CRITICAL' ? 'badge-danger' : (r.priority === 'HIGH' ? 'badge-warning' : 'badge-rules')}">${r.priority}</span>
+                ${r.auto_synced ? `<span class="badge badge-success" style="font-size: 9px;">Live</span>` : ''}
+              </div>
             </div>
 
             <div class="card-desc">${r.description || 'No description provided.'}</div>
@@ -112,6 +120,18 @@ export const rulesView = {
     `;
 
     // Listeners
+    container.querySelector('#btn-sync-rules')?.addEventListener('click', async () => {
+      Toast.info('Синхронизация правил из канонических источников...');
+      try {
+        await api.syncSources();
+        Toast.success('Реестр правил и гардрайлов успешно обновлен!');
+        await this.loadRules(container);
+        if (window.appRouter) window.appRouter.updateStatsCounters();
+      } catch (err) {
+        Toast.error(err.message || 'Ошибка синхронизации');
+      }
+    });
+
     const searchInput = container.querySelector('#rules-search');
     searchInput?.addEventListener('input', (e) => {
       this.searchQuery = e.target.value;
