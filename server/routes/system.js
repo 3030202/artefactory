@@ -48,6 +48,20 @@ router.get('/telemetry', (req, res) => {
   });
 });
 
+// Get Live System & Activity Logs
+router.get('/logs', (req, res) => {
+  const { limit = 100, level, category } = req.query;
+  const logs = db.getLogs(limit, level, category);
+  res.json({
+    success: true,
+    data: {
+      logs,
+      total_count: (db.data.logs || []).length,
+      filtered_count: logs.length
+    }
+  });
+});
+
 // Get Project State & Lifecycle Phases from STATE.json
 router.get('/state', (req, res) => {
   try {

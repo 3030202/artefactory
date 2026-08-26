@@ -2,6 +2,7 @@ import { api } from '../api.js';
 import { Toast } from '../components/toast.js';
 import { DiffViewer } from '../components/diffViewer.js';
 import { renderEmptyState } from '../components/emptyState.js';
+import { PromptEditor } from '../components/promptEditor.js';
 
 export const promptsView = {
   prompts: [],
@@ -328,101 +329,11 @@ export const promptsView = {
     });
   },
 
-  // Modal: Edit or Create Prompt
-  openEditModal(prompt, container) {
-    const isEdit = Boolean(prompt);
-    const backdrop = document.createElement('div');
-    backdrop.className = 'modal-backdrop open';
-
-    backdrop.innerHTML = `
-      <div class="modal-window">
-        <div class="modal-header">
-          <div class="modal-title">
-            <span>${isEdit ? '✏️ Edit Prompt Template' : '✨ New Prompt Template'}</span>
-          </div>
-          <button class="btn-icon btn-close-modal">✕</button>
-        </div>
-        <div class="modal-body">
-          <div class="form-group">
-            <label class="form-label">Title *</label>
-            <input type="text" class="form-input" id="edit-title" value="${isEdit ? prompt.title : ''}" placeholder="e.g. System Architecture & Tech Spec Generator">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Description</label>
-            <input type="text" class="form-input" id="edit-desc" value="${isEdit ? (prompt.description || '') : ''}" placeholder="Short summary of this prompt's purpose">
-          </div>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
-            <div class="form-group">
-              <label class="form-label">Target Model</label>
-              <input type="text" class="form-input" id="edit-model" value="${isEdit ? (prompt.model || 'claude-3-7-sonnet') : 'claude-3-7-sonnet'}">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Tags (comma separated)</label>
-              <input type="text" class="form-input" id="edit-tags" value="${isEdit ? (prompt.tags || []).join(', ') : 'architecture, spec'}">
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Template Content (Use {{VARIABLE_NAME}} for dynamic placeholders) *</label>
-            <textarea class="form-input" id="edit-template" rows="10" style="font-family: var(--font-mono); font-size: 13px;">${isEdit ? prompt.template : 'You are an expert AI assistant.\n\nTask: {{TASK_DESCRIPTION}}\n\nConstraints: {{CONSTRAINTS}}'}</textarea>
-          </div>
-          ${isEdit ? `
-            <div class="form-group">
-              <label class="form-label">Version Update Note</label>
-              <input type="text" class="form-input" id="edit-note" placeholder="e.g. Added constraint parameters">
-            </div>
-          ` : ''}
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary btn-close-modal">Cancel</button>
-          <button class="btn btn-primary" id="btn-save-prompt">
-            <span>💾</span> Save Prompt
-          </button>
-        </div>
-      </div>
-    `;
-
-    document.body.appendChild(backdrop);
-
-    backdrop.querySelector('#btn-save-prompt')?.addEventListener('click', async () => {
-      const title = backdrop.querySelector('#edit-title')?.value.trim();
-      const description = backdrop.querySelector('#edit-desc')?.value.trim();
-      const model = backdrop.querySelector('#edit-model')?.value.trim();
-      const tags = (backdrop.querySelector('#edit-tags')?.value || '').split(',').map(t => t.trim()).filter(Boolean);
-      const template = backdrop.querySelector('#edit-template')?.value;
-      const note = backdrop.querySelector('#edit-note')?.value;
-
-      if (!title || !template) {
-        Toast.error('Title and Template are required.');
-        return;
-      }
-
-      if (isEdit) {
-        await api.updatePrompt(prompt.id, {
-          title,
-          description,
-          model,
-          tags,
-          template,
-          version_note: note
-        });
-        Toast.success('Prompt updated successfully.');
-      } else {
-        await api.createPrompt({
-          title,
-          description,
-          model,
-          tags,
-          template
-        });
-        Toast.success('New prompt created successfully.');
-      }
-
-      backdrop.remove();
-      await this.loadPrompts(container);
-    });
-
-    backdrop.querySelectorAll('.btn-close-modal').forEach(b => {
-      b.addEventListener('click', () => backdrop.remove());
+  // Modal: Prompt Studio Pro & Variable Editor
+  openEditModal(prompt = null, container = null) {
+    PromptEditor.openModal(prompt, () => {
+      if (container) this.loadPrompts(container);
+      if (window.appRouter) window.appRouter.updateStatsCounters();
     });
   },
 

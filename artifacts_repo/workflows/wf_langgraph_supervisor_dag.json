@@ -83,18 +83,18 @@
   "upstream_feed": true,
   "in_tokens_est": 151,
   "out_tokens_est": 250,
-  "last_synced_at": "2026-08-26T13:32:10.489Z",
-  "created_at": "2026-08-26T13:32:08.424Z",
-  "updated_at": "2026-08-26T13:32:10.489Z",
+  "last_synced_at": "2026-08-26T14:09:06.273Z",
+  "created_at": "2026-08-26T14:09:04.221Z",
+  "updated_at": "2026-08-26T14:09:06.273Z",
   "history": [
     {
       "version": "2.3.0",
-      "timestamp": "2026-08-26T13:32:10.489Z",
+      "timestamp": "2026-08-26T14:09:06.273Z",
       "note": "Update"
     },
     {
       "version": "2.3.0",
-      "timestamp": "2026-08-26T13:32:08.424Z",
+      "timestamp": "2026-08-26T14:09:04.221Z",
       "note": "Initial creation",
       "content_snapshot": null
     }

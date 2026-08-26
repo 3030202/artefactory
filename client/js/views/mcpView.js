@@ -1,6 +1,7 @@
 import { api } from '../api.js';
 import { Toast } from '../components/toast.js';
 import { renderEmptyState } from '../components/emptyState.js';
+import { McpInspector } from '../components/mcpInspector.js';
 
 export const mcpView = {
   servers: [],
@@ -58,6 +59,9 @@ export const mcpView = {
           <button class="btn btn-secondary" id="btn-export-mcp-config">
             <span>⚙️</span> Export mcp_config.json
           </button>
+          <button class="btn btn-secondary" id="btn-launch-mcp-inspector" style="background: rgba(6, 182, 212, 0.15); border-color: rgba(6, 182, 212, 0.4); color: #22d3ee;">
+            <span>🔬</span> Launch Inspector Sandbox
+          </button>
           <button class="btn btn-primary" id="btn-create-mcp">
             <span>✨</span> Register MCP Server
           </button>
@@ -81,7 +85,7 @@ export const mcpView = {
 
         <div style="display: flex; align-items: center; gap: 10px;">
           <button class="btn btn-secondary btn-sm" id="btn-open-gateway-tester">
-            <span>⚡</span> Test JSON-RPC Tools
+            <span>🔬</span> MCP Inspector Sandbox
           </button>
           <button class="btn btn-primary btn-sm" id="btn-copy-claude-config" style="background: var(--cat-mcp, #06b6d4);">
             <span>📋</span> Copy Claude / Cursor Config
@@ -198,7 +202,11 @@ export const mcpView = {
     });
 
     container.querySelector('#btn-open-gateway-tester')?.addEventListener('click', () => {
-      this.openGatewayTesterModal();
+      McpInspector.openModal();
+    });
+
+    container.querySelector('#btn-launch-mcp-inspector')?.addEventListener('click', () => {
+      McpInspector.openModal();
     });
 
     container.querySelector('#btn-create-mcp')?.addEventListener('click', () => {
@@ -210,7 +218,7 @@ export const mcpView = {
     });
 
     container.querySelector('.btn-empty-secondary')?.addEventListener('click', () => {
-      this.openGatewayTesterModal();
+      McpInspector.openModal();
     });
 
     container.querySelector('#btn-export-mcp-config')?.addEventListener('click', async () => {

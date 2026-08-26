@@ -11,6 +11,7 @@ import { gitopsView } from './views/gitopsView.js';
 import { tuiEngine } from './tui/tui_engine.js';
 import { Icons } from './components/icons.js';
 import { RuntimeWidget } from './components/runtimeWidget.js';
+import { GitStatusBar } from './components/gitStatusBar.js';
 
 class AppRouter {
   constructor() {
@@ -43,6 +44,7 @@ class AppRouter {
   init() {
     this.hydrateIcons();
     RuntimeWidget.init();
+    GitStatusBar.init();
 
     // Desktop & Drawer Navigation items click
     document.querySelectorAll('.nav-item[data-route]').forEach(item => {

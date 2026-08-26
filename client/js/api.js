@@ -28,6 +28,10 @@ export const api = {
   // System & Stats
   getStats() { return this.request('/system/stats'); },
   getSystemTelemetry() { return this.request('/system/telemetry'); },
+  getSystemLogs(params = {}) {
+    const qs = new URLSearchParams(params).toString();
+    return this.request(`/system/logs${qs ? '?' + qs : ''}`);
+  },
   getState() { return this.request('/system/state'); },
   updateState(patch) { return this.request('/system/state', { method: 'POST', body: JSON.stringify(patch) }); },
   resetSeed() { return this.request('/system/reset-seed', { method: 'POST' }); },

@@ -70,10 +70,11 @@ export class Database {
     console.log('Database initialized with seed data.');
   }
 
-  logActivity(action, category, itemId, itemTitle, details = {}) {
+  logActivity(action, category, itemId, itemTitle, details = {}, level = 'INFO') {
     const logEntry = {
       id: `log_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
       timestamp: new Date().toISOString(),
+      level: level || 'INFO',
       action,
       category,
       itemId,
@@ -87,6 +88,17 @@ export class Database {
     }
     this.save();
     return logEntry;
+  }
+
+  getLogs(limit = 100, level = null, category = null) {
+    let logs = this.data.logs || [];
+    if (level && level !== 'ALL') {
+      logs = logs.filter(l => (l.level || 'INFO') === level);
+    }
+    if (category && category !== 'ALL') {
+      logs = logs.filter(l => l.category === category);
+    }
+    return logs.slice(0, Number(limit) || 100);
   }
 
   // Generic Collection Helpers
